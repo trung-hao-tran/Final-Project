@@ -1,0 +1,12 @@
+Week 1
+Group formed and named.
+Selected Scrum master.
+Created the Jira site.
+Decided on the topic.
+
+Week 2
+Defined the start and end dates for all sprints.
+Decided on the general structure of the project.
+Completed some user stories.
+Divided user needs into several broad categories.
+Communicated how all project objectives/functionalities are satisfied by user stories that are defined.
