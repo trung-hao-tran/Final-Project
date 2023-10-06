@@ -10,3 +10,9 @@ Decided on the general structure of the project.
 Completed some user stories.
 Divided user needs into several broad categories.
 Communicated how all project objectives/functionalities are satisfied by user stories that are defined.
+
+Week 3
+Modify all user stories and add motivation to them.
+Modify the proposal of the report that communicates the user stories to the project objectives/functionalities to accommodate the user stories' modifications.
+Complete the sprints and user stories section of the proposal.
+Provide some help with storyboarding, communicate user stories and storyboards.
