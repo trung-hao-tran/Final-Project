@@ -1,6 +1,23 @@
 Week 1
-Group formed and named. Selected Scrum Master. Our Scrum Master created the Jira Site. Decided on the topic with other group members. We finally chose project 18 and dicided to communicate with Discord. I also do some research about this topic.
+Group formed and named. 
+Selected Scrum Master. 
+Our Scrum Master created the Jira Site. 
+Decided on the topic with other group members. 
+We finally chose project 18 and dicided to communicate with Discord. 
+I also do some research about this topic.
 
 
 Week 2
-Our team leader held a meeting with the client, from which we gained a better understanding of more details that the project needs to include. As a team, we decided on everyone's part in the proposal. I was responsible for writing the background part of the project. We also identified objectives in orders and what we need to do.
+Our team leader held a meeting with the client, from which we gained a better understanding of more details that the project needs to include. 
+As a team, we decided on everyone's part in the proposal. 
+I was responsible for writing the background part of the project. 
+We also identified objectives in orders and what we need to do.
+
+
+Week 3
+Do some research for the background related to the project. 
+Modify and add some user stories. 
+Completed project proposal. 
+Started to prepare for code work.
+
+Week 4
