@@ -1,0 +1,19 @@
+Week 1:
+Group formed and named. Selected Scrum Master. Created the Jira Site. Created Github repository
+Decided on the topic with other group members. 
+
+
+Week 2
+Generate user stories and defined sprints
+Decided on the general structure of the project
+Met up with the first client.
+Slit the work together with team.
+Drew wireframes and help proof-read the proposals.
+
+Week 3 
+Novel function brainstorming
+Discuss with team in details on the project structure and domains
+Submitted proposal
+Researched on the technology that we are going to use
+
+Week 4
