@@ -1,4 +1,5 @@
 const express = require('express')
+const requireAuth = require('../middleware/requireAuth');
 const checkAdmin = require('../middleware/checkAdmin');
 
 // controller functions
@@ -12,8 +13,13 @@ router.post('/login', loginUser)
 // signup route
 router.post('/signup', signupUser)
 
+// update profile
+router.put('/profile', requireAuth, updateUserProfile);
+
 
 // admin routes
+// Get all users
+router.get('/admin/users', checkAdmin, getAllUsers);
 // Update users
 router.put('/admin/user/:userId', checkAdmin, updateUser);
 // Delete users

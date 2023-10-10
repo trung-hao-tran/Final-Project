@@ -37,8 +37,26 @@ const signupUser = async (req, res) => {
   }
 }
 
+// update profile
+function updateUserProfile(req, res) {
+  const userId = req.user._id; 
+  const updatedData = req.body;
+
+  User.findByIdAndUpdate(userId, updatedData, { new: true })
+      .then(user => res.send(user))
+      .catch(err => res.status(400).send(err.message));
+}
+
+
 
 // admin routes
+
+// Get all users
+function getAllUsers(req, res) {
+  User.find({})
+      .then(users => res.send(users))
+      .catch(err => res.status(400).send(err.message));
+}
 
 // Update users
 function updateUser(req, res) {
@@ -66,6 +84,8 @@ function deleteUser(req, res) {
 module.exports = { 
   signupUser,
   loginUser,
+  updateUserProfile,
+  getAllUsers,
   updateUser,
   deleteUser
 }
