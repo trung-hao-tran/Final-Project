@@ -1,10 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\public",
     "\\src",
     "\\src\\components",
-    "\\src\\components\\section-components"
+    "\\src\\components\\section-components",
+    "\\src\\components\\shop-components"
   ],
-  "SelectedNode": "\\src\\components\\section-components\\login.js",
+  "SelectedNode": "\\src\\components\\shop-left-sidebar.js",
   "PreviewInSolutionExplorer": false
 }

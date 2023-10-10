@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import parse from 'html-react-parser';
 
 class Login extends Component {
 
@@ -47,7 +46,7 @@ class Login extends Component {
 					</div>
 				</div>
 				</div>
-						</div>
+			</div>
 			<div className="ltn__modal-area ltn__add-to-cart-modal-area----">
 			<div className="modal fade" id="ltn_forget_password_modal" tabIndex={-1}>
 				<div className="modal-dialog modal-md" role="document">
@@ -72,13 +71,7 @@ class Login extends Component {
 								</div>
 								</form>
 							</div>
-							{/* additional-info */}
-							<div className="additional-info d-none">
-								<p>We want to give you <b>10% discount</b> for your first order, <br />  Use discount code at checkout</p>
-								<div className="payment-method">
-								<img src={publicUrl+"assets/img/icons/payment.png"} alt="#" />
-								</div>
-							</div>
+							
 							</div>
 						</div>
 						</div>
