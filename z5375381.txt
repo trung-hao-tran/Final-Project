@@ -16,3 +16,13 @@ Modify all user stories and add motivation to them.
 Modify the proposal of the report that communicates the user stories to the project objectives/functionalities to accommodate the user stories' modifications.
 Complete the sprints and user stories section of the proposal.
 Provide some help with storyboarding, communicate user stories and storyboards.
+
+Week 4
+Completed the basic framework of the project backend.
+Completed the login/registration function.
+
+Week 5
+Integrated code with other backend programmers.
+Completed the framework for task management (creating and viewing tasks).
+Differentiated user roles.
+Added user management functions for administrators.
