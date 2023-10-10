@@ -3,7 +3,13 @@ const requireAuth = require('../middleware/requireAuth');
 const checkAdmin = require('../middleware/checkAdmin');
 
 // controller functions
-const { loginUser, signupUser } = require('../controllers/userController')
+const { loginUser,
+        signupUser,
+        updateUserProfile,
+        getAllUsers,
+        updateUser,
+        deleteUser
+    } = require('../controllers/userController')
 
 const router = express.Router()
  
