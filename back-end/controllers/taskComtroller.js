@@ -21,9 +21,6 @@ const getTask = async (req, res) => {
   if (!task) {
     return res.status(404).json({error: 'No such task'})
   }
-  if (user_id.toString() !== task.user_id && user_id.toString() !== process.env.ADMINID) {
-    return res.status(401).json({error: 'No authority'})
-  }
   res.status(200).json(task)
 }
 
