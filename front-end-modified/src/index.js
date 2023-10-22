@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, HashRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomeV1 from './components/home-v1';
 
-
+import Prefetch from './feature/auth/prefetch';
 
 import ShopLeftSidebar from './components/shop-left-sidebar';
 
@@ -11,23 +11,30 @@ import MyAccount from './components/my-account';
 import Login from './components/login';
 import Register from './components/register';
 
-
+import { store } from './app/store'
+import { Provider } from 'react-redux'
 
 class Root extends Component {
     render() {
         return(
-                <HashRouter basename="/">
-	                <div>
-	                <Switch>
-	                    <Route exact path="/" component={HomeV1} />
-                        <Route path="/shop-left-sidebar" component={ShopLeftSidebar} />
-
-                        <Route path="/my-account" component={ MyAccount } />
-                        <Route path="/login" component={ Login } />
-                        <Route path="/register" component={ Register } />
-	                </Switch>
-	                </div>
-                </HashRouter>
+            <Provider store={store}>   
+                <BrowserRouter path="/*">
+	                <Routes>
+	                    <Route path="/" element={<HomeV1 />} />
+                        <Route path="/login" element={ <Login /> } />
+                        <Route path="/register" element={ <Register /> } />
+                        
+                        <Route element={<Prefetch />}>
+                        
+                            <Route path="/my-account" element={ <MyAccount /> } />
+                            <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
+                        
+                        </Route>
+	                
+                    </Routes>
+                </BrowserRouter>
+            </Provider>
+            
         )
     }
 }

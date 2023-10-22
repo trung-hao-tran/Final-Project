@@ -39,9 +39,12 @@ class Footer_v1 extends Component {
 
     render() {
 
+        let publicUrl = process.env.PUBLIC_URL+'/'
+        let imgattr = "Footer logo"
+
         return (
 				<footer className="ltn__footer-area  ">
-				  
+				  <Copyright />
 				</footer>
         )
     }
