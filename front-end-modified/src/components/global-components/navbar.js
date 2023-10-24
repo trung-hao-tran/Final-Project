@@ -40,27 +40,9 @@ class Navbar extends Component {
 						<nav>
 						<div className="ltn__main-menu go-top">
 							<ul>
-							<li className="menu-icon"><Link to="/">Tasks</Link>
-								<ul className="sub-menu menu-pages-img-show">
-								<li>
-									<Link to="/shop-left-sidebar">Tasks overthrough</Link>
-								</li>
-								
-								</ul>
-							</li>
-							<li className="menu-icon"><Link to="/about">About</Link>
-								
-							</li>
-							<li className="menu-icon"><Link to="/post">Post</Link>
-
-							</li>
-							<li className="menu-icon"><Link to="/news">News</Link>
-								
-							</li>
-							<li className="menu-icon"><Link to="/pages">Pages</Link>
-								
-							</li>
-							<li><Link to="/contact">Contact</Link></li>
+								<li><Link to="/shop-left-sidebar">Tasks</Link></li>
+								<li ><Link to="/about">About</Link></li>
+								<li><Link to="/contact">Contact</Link></li>
 							</ul>
 						</div>
 						</nav>

@@ -1031,6 +1031,10 @@ textarea {
   padding-right: 40px;
 }
 
+.contact-form-box .form__input--incomplete {
+  border-color:  var(--red);
+}
+
 input[type="text"]::-webkit-input-placeholder,
 input[type="email"]::-webkit-input-placeholder,
 input[type="password"]::-webkit-input-placeholder,
@@ -6485,7 +6489,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   animation: 300ms ease-in-out 0s normal none 1 running fadeInDown;
   background-color: var(--white);
   left: 0;
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   width: 100%;
   z-index: 999;
