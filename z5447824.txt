@@ -20,4 +20,18 @@ Modify and add some user stories.
 Completed project proposal. 
 Started to prepare for code work.
 
+
 Week 4
+Setting up the running environment.
+Connecting to the database.
+Start writing back-end code.
+
+Week 5
+Completing the back-end of sprint 1.
+Perform demo A preparation and presentation.
+Write retrospective A with group members.
+
+Week 6
+Flexibility Week
+
+Week 7
