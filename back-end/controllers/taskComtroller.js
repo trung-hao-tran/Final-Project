@@ -33,7 +33,7 @@ const createTask = async (req, res) => {
   else{
     res.status(400).json("the user does not exist")
   }
-
+  const user_id = req.user._id
     const {
         title,
         description,
@@ -41,7 +41,8 @@ const createTask = async (req, res) => {
         location,
         time,
         images,
-        frequency
+        frequency,
+        price
         } = req.body
 
     let emptyFields = []
@@ -58,6 +59,9 @@ const createTask = async (req, res) => {
   if(!frequency) {
     emptyFields.push('frequency')
   }
+  if(!price) {
+    emptyFields.push('price')
+  }
   if(emptyFields.length > 0) {
     return res.status(400).json({ error: 'Please fill in all the fields', emptyFields })
   }
@@ -67,6 +71,7 @@ const createTask = async (req, res) => {
   to_create.description = description
   to_create.time = time
   to_create.frequency = frequency
+  to_create.price = price
   to_create.user_id = user_id.toString()
   if(categories) {
     to_create.categories = categories
