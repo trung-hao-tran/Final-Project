@@ -27,7 +27,12 @@ const getTask = async (req, res) => {
 
 // create new task
 const createTask = async (req, res) => {
+  if (req.user !== null) {
   const user_id = req.user._id
+}
+  else{
+    res.status(400).json("the user does not exist")
+  }
 
     const {
         title,
@@ -121,6 +126,7 @@ const updateTask = async (req, res) => {
     return res.status(400).json({error: 'No such task'})
   }
 
+  //console.log(task.user_id.toString(), "admin", process.env.ADMINID)
   if (user_id.toString() !== task.user_id && task.user_id.toString() !== process.env.ADMINID) {
     return res.status(401).json({error: 'No authority'})
   }
