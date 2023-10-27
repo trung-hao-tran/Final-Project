@@ -1,0 +1,75 @@
+For user:
+
+login
+POST
+http://localhost:4000/api/user/login
+{
+	"email": "test@test.com",
+	"password": "Comp9900test!"
+}
+
+
+signup
+POST
+http://localhost:4000/api/user/signup
+{
+	"name" : "temp_test_user",
+	"email" : "temp_test@test.com",
+	"password": "TempTest001!"
+}
+
+
+post new task
+POST
+http://localhost:4000/api/tasks/
+{
+	"title" : "A test task",
+	"description" : "This is a test task.",
+	"categories" : "Test",
+	"location" : "UNSW",
+	"time" : "2023-10-31",
+	"frequency": "1"
+}
+
+
+get all tasks
+GET
+http://localhost:4000/api/tasks/
+
+
+get a single task
+GET
+http://localhost:4000/api/tasks/"task_id"
+
+
+delete a task
+DELETE
+http://localhost:4000/api/tasks/"task_id"
+
+
+update profile
+PUT
+http://localhost:4000/api/user/profile
+
+
+
+
+
+For admin:
+
+get all users
+GET
+http://localhost:4000/api/user/admin/users/
+
+
+update a user
+PUT
+http://localhost:4000/api/user/admin/user/"user_id"
+{
+	"name": "temp_test1"
+}
+
+
+delete a user
+DELETE
+http://localhost:4000/api/user/admin/user/"user_id"
