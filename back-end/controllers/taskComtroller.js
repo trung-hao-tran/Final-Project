@@ -53,7 +53,7 @@ const createTask = async (req, res) => {
   if(!description) {
     emptyFields.push('description')
   }
-  if(!time) {
+  if(!time.start || !time.end) {
     emptyFields.push('time')
   }
   if(!frequency) {
@@ -164,10 +164,10 @@ const filterTasks = async (req, res) => {
     }
 
     // filter by two time points
-    if (time && time.length === 2) {
-      query.time = {
-        $gte: new Date(time[0]),
-        $lte: new Date(time[1])
+    if (time && time.start && time.end) {
+      query['time.start'] = {
+        $gte: new Date(time.start),
+        $lte: new Date(time.end)
       };
     }
 

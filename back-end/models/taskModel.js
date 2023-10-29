@@ -20,8 +20,14 @@ const taskSchema = new Schema({
     required: false
   },
   time: {
-    type: Date,
-    required: true
+    start: {
+      type: Date,
+      required: true
+    },
+    end: {
+      type: Date,
+      required: true
+    }
   },
   images: {
     type: [String],
