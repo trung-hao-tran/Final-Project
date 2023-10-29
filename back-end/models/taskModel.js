@@ -38,6 +38,14 @@ const taskSchema = new Schema({
   user_id: {
     type: String,
     required: true
+  },
+  deadline: {
+    type: String,
+    required: false
+  },
+  tasker_id: {
+    type: String,
+    default: "None"
   }
 }, { timestamps: true })
 

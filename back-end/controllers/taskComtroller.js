@@ -1,5 +1,6 @@
 const Task = require('../models/taskModel')
 const User = require('../models/userModel')
+const Bid = require('../models/bidModel')
 const mongoose = require('mongoose')
 
 // get all tasks
@@ -142,11 +143,72 @@ const updateTask = async (req, res) => {
   res.status(200).json(taskReturn)
 }
 
+// GET all taskers bidding on a given task
+const getTaskers = async (req, res) => {
+  const user_id = req.user._id
+  const { id } = req.params
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({error: 'No such task'})
+  }
+  const bids = await Bid.find({task_id: id})
+
+  if (!bids) {
+    return res.status(404).json({error: 'No bid yet!'})
+  }
+
+  taskers = []
+  for (const bid of bids) {
+    tasker = User.findById(bid.user_id)
+    taskers.push(taskers)
+  }
+
+  res.status(200).json(taskers)
+}
+
+const assignTasker = async (req, res) => {
+  const user_id = req.user._id
+  const taskId = req.params.taskId
+  const taskerId = req.params.taskerId
+
+  // check task exist
+  if (!mongoose.Types.ObjectId.isValid(taskId)) {
+    return res.status(404).json({error: 'No such task'})
+  }
+
+  const task = await Task.findById(taskId)
+
+  if (!task) {
+    return res.status(400).json({error: 'No such task'})
+  }
+
+  // check if the tasker bids on the task
+  if (!mongoose.Types.ObjectId.isValid(taskerId)) {
+    return res.status(404).json({error: 'No such tasker'})
+  }
+
+  const tasker = await Task.findById(taskerId)
+
+  if (!tasker) {
+    return res.status(400).json({error: 'No such tasker'})
+  }
+
+  const bid = await Bid.findOne({task_id: taskId, user_id: taskerId})
+
+  if (!bid) {
+    return res.status(400).json({error: 'the tasker have no bid on the task'})
+  }
+
+  // assign tasker to the task
+  const taskReturn = await Task.findOneAndUpdate({_id: taskId}, {taskerId: taskerId}, {new: true})
+  res.status(200).json(taskReturn)
+}
 
 module.exports = {
   getTasks,
   getTask,
   createTask,
   deleteTask,
-  updateTask
+  updateTask,
+  getTaskers,
+  assignTasker
 }
