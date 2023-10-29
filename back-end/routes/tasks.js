@@ -5,7 +5,8 @@ const {
   getTasks,
   getTask,
   deleteTask,
-  updateTask
+  updateTask,
+  filterTasks
 } = require('../controllers/taskComtroller')
 
 const requireAuth = require('../middleware/requireAuth')
@@ -29,6 +30,9 @@ router.delete('/:id', deleteTask)
 
 // UPDATE a task
 router.patch('/:id', updateTask)
+
+// filter tasks
+router.post('/filter-tasks', filterTasks)
 
 
 module.exports = router

@@ -20,7 +20,7 @@ const taskSchema = new Schema({
     required: false
   },
   time: {
-    type: String,
+    type: Date,
     required: true
   },
   images: {

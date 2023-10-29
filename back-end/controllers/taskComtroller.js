@@ -143,10 +143,64 @@ const updateTask = async (req, res) => {
 }
 
 
+// filter tasks
+const filterTasks = async (req, res) => {
+  try {
+    const { title, categories, location, time, frequency, price } = req.body
+    const query = {};
+
+    if (title && title.length > 0) {
+      query.title = new RegExp(title, 'i');
+    }
+
+    if (categories && categories.length > 0) {
+      query.categories = {
+        $in: categories.map(category => new RegExp(category, 'i'))
+      };
+    }
+
+    if (location && location.length > 0) {
+      query.location = new RegExp(location, 'i');
+    }
+
+    // filter by two time points
+    if (time && time.length === 2) {
+      query.time = {
+        $gte: new Date(time[0]),
+        $lte: new Date(time[1])
+      };
+    }
+
+    // filter by frequency range
+    if (frequency && frequency.length === 2) {
+      query.frequency = {
+        $gte: frequency[0],
+        $lte: frequency[1]
+      };
+    }
+
+    // filter by price range
+    if (price && price.length === 2) {
+      query.price = {
+        $gte: price[0],
+        $lte: price[1]
+      };
+    }
+
+    const tasks = await Task.find(query);
+    res.status(200).json(tasks);
+  
+  } catch (error) {
+    res.status(400).json({error: 'server error'})
+  }
+}
+
+
 module.exports = {
   getTasks,
   getTask,
   createTask,
   deleteTask,
-  updateTask
+  updateTask,
+  filterTasks
 }
