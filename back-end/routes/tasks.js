@@ -7,8 +7,9 @@ const {
   deleteTask,
   updateTask,
   getTaskers,
-  assignTasker
-} = require('../controllers/taskComtroller')
+  assignTasker,
+  filterTasks
+} = require('../controllers/taskController')
 
 const requireAuth = require('../middleware/requireAuth')
 
@@ -37,5 +38,8 @@ router.get('/taskers/:id', getTaskers)
 
 // assign a tasker to complete a task
 router.post('/taskers/:taskId/:taskerId', assignTasker)
+// filter tasks
+router.post('/filter-tasks', filterTasks)
+
 
 module.exports = router

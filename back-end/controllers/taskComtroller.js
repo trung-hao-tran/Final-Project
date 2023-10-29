@@ -54,7 +54,7 @@ const createTask = async (req, res) => {
   if(!description) {
     emptyFields.push('description')
   }
-  if(!time) {
+  if(!time.start || !time.end) {
     emptyFields.push('time')
   }
   if(!frequency) {
@@ -203,6 +203,59 @@ const assignTasker = async (req, res) => {
   res.status(200).json(taskReturn)
 }
 
+// filter tasks
+const filterTasks = async (req, res) => {
+  try {
+    const { title, categories, location, time, frequency, price } = req.body
+    const query = {};
+
+    if (title && title.length > 0) {
+      query.title = new RegExp(title, 'i');
+    }
+
+    if (categories && categories.length > 0) {
+      query.categories = {
+        $in: categories.map(category => new RegExp(category, 'i'))
+      };
+    }
+
+    if (location && location.length > 0) {
+      query.location = new RegExp(location, 'i');
+    }
+
+    // filter by two time points
+    if (time && time.start && time.end) {
+      query['time.start'] = {
+        $gte: new Date(time.start),
+        $lte: new Date(time.end)
+      };
+    }
+
+    // filter by frequency range
+    if (frequency && frequency.length === 2) {
+      query.frequency = {
+        $gte: frequency[0],
+        $lte: frequency[1]
+      };
+    }
+
+    // filter by price range
+    if (price && price.length === 2) {
+      query.price = {
+        $gte: price[0],
+        $lte: price[1]
+      };
+    }
+
+    const tasks = await Task.find(query);
+    res.status(200).json(tasks);
+  
+  } catch (error) {
+    res.status(400).json({error: 'server error'})
+  }
+}
+
+
 module.exports = {
   getTasks,
   getTask,
@@ -210,5 +263,6 @@ module.exports = {
   deleteTask,
   updateTask,
   getTaskers,
-  assignTasker
+  assignTasker,
+  filterTasks
 }
