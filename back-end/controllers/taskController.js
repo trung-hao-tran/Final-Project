@@ -43,7 +43,8 @@ const createTask = async (req, res) => {
         time,
         images,
         frequency,
-        price
+        price,
+        priority 
         } = req.body
 
     let emptyFields = []
@@ -73,6 +74,7 @@ const createTask = async (req, res) => {
   to_create.time = time
   to_create.frequency = frequency
   to_create.price = price
+  to_create.priority = priority
   to_create.user_id = user_id.toString()
   if(categories) {
     to_create.categories = categories
@@ -255,6 +257,71 @@ const filterTasks = async (req, res) => {
   }
 }
 
+const addMilestoneToTask = async (req, res) => {
+  const { id } = req.params; // Task id
+  const { title, description, priority } = req.body; // Get title, description and priority from request
+
+  try {
+    const updatedTask = await Task.findOneAndUpdate(
+      { _id: id },
+      { $push: { milestones: { title, description, priority } } },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ error: 'Task does not exist' });
+    }
+
+    res.status(200).json({ status: 'success', data: updatedTask });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error.message });
+  }
+}
+
+const markMilestoneAsCompleted = async (req, res) => {
+  const { taskId, milestoneId } = req.params; // Task ID and Milestone ID
+  const { priority } = req.body; // Get the priority in the request
+
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ error: 'Task does not exist' });
+    }
+
+    const milestone = task.milestones.id(milestoneId);
+    if (!milestone) {
+      return res.status(404).json({ error: 'Milestone does not exist' });
+    }
+
+    milestone.completed = true;
+    milestone.priority = priority; // Set milestone priorities
+    await task.save();
+
+    res.status(200).json({ status: 'success', data: task });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error.message });
+  }
+}
+
+const deleteMilestoneFromTask = async (req, res) => {
+  const { taskId, milestoneId } = req.params; // Task ID and Milestone ID
+
+  try {
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task does not exist' });
+    }
+
+    task.milestones.pull({ _id: milestoneId }); // Remove a milestone with a specific ID from an array of milestones
+    await task.save();
+
+    res.status(200).json({ status: 'success', data: task });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error.message });
+  }
+};
+
 
 module.exports = {
   getTasks,
@@ -264,5 +331,8 @@ module.exports = {
   updateTask,
   getTaskers,
   assignTasker,
-  filterTasks
+  filterTasks,
+  addMilestoneToTask,
+  markMilestoneAsCompleted,
+  deleteMilestoneFromTask
 }
