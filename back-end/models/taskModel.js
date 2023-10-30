@@ -48,7 +48,31 @@ const taskSchema = new Schema({
   tasker_id: {
     type: String,
     default: "None"
-  }
+  },
+  priority: {
+    type: String,
+    enum: ['Low', 'Medium', 'High'],
+    default: 'Medium'
+  },
+  milestones:[
+    {
+      title: String,
+      description: String,
+      date: {
+        type: Date,
+        default: Date.now
+      },
+      completed: {
+        type: Boolean,
+        default: false
+      },
+      priority: {
+        type: String,
+        enum: ['Low', 'Medium', 'High'],
+        default: 'Medium'
+      }
+    }
+  ]
 }, { timestamps: true })
 
 module.exports = mongoose.model('Task', taskSchema)
