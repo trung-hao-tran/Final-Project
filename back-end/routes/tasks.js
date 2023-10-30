@@ -8,7 +8,10 @@ const {
   updateTask,
   getTaskers,
   assignTasker,
-  filterTasks
+  filterTasks,
+  addMilestoneToTask,
+  markMilestoneAsCompleted,
+  deleteMilestoneFromTask
 } = require('../controllers/taskController')
 
 const requireAuth = require('../middleware/requireAuth')
@@ -41,5 +44,13 @@ router.post('/taskers/:taskId/:taskerId', assignTasker)
 // filter tasks
 router.post('/filter-tasks', filterTasks)
 
+// Add milestones to tasks
+router.post('/:id/milestones', addMilestoneToTask);
+
+// Mark milestone as complete
+router.patch('/:taskId/milestones/:milestoneId/complete', markMilestoneAsCompleted);
+
+// DELETE a milestone from a task
+router.delete('/:taskId/milestones/:milestoneId', deleteMilestoneFromTask);
 
 module.exports = router
