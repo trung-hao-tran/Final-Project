@@ -102,7 +102,13 @@ const refresh = async (req, res) => {
   }
 }
 
-
+// get single user information (helper function for front-end)
+const getUser = async (req, res) => {
+  const id = req.params.userId
+  User.findById(userId)
+      .then(user => res.send({name: user.name, email: user.email}))
+      .catch(err => res.status(400).send(err.message));
+}
 
 
 module.exports = { 
@@ -113,4 +119,5 @@ module.exports = {
   updateUser,
   deleteUser,
   refresh,
+  getUser,
 }

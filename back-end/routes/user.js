@@ -34,7 +34,8 @@ router.delete('/admin/user/:userId', checkAdmin, deleteUser);
 
 router.post('/refresh', refresh);
 
-
+// Get a single user (helper function for front-end usage)
+router.get('/getuser/:userId', getUser);
 
 
 module.exports = router
