@@ -8,7 +8,8 @@ const { loginUser,
         updateUserProfile,
         getAllUsers,
         updateUser,
-        deleteUser
+        deleteUser,
+        refresh
     } = require('../controllers/userController')
 
 const router = express.Router()
@@ -30,6 +31,9 @@ router.get('/admin/users', checkAdmin, getAllUsers);
 router.put('/admin/user/:userId', checkAdmin, updateUser);
 // Delete users
 router.delete('/admin/user/:userId', checkAdmin, deleteUser);
+
+router.post('/refresh', refresh);
+
 
 
 
