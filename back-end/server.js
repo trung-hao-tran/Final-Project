@@ -5,12 +5,14 @@ const mongoose = require('mongoose')
 const taskRoutes = require('./routes/tasks')
 const userRoutes = require('./routes/user')
 const bid = require('./routes/bid')
+const cors = require('cors')
 
 //express app
 const app =express()
 
 // middleware
 app.use(express.json())
+app.use(cors())
 
 app.use((req, res, next) => {
     console.log(req.path, req.method)

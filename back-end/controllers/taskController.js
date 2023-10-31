@@ -11,7 +11,6 @@ const getTasks = async (req, res) => {
 
 // get a single task
 const getTask = async (req, res) => {
-  const user_id = req.user._id
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: 'No such task'})
@@ -147,7 +146,6 @@ const updateTask = async (req, res) => {
 
 // GET all taskers bidding on a given task
 const getTaskers = async (req, res) => {
-  const user_id = req.user._id
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: 'No such task'})
