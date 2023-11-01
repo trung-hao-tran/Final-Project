@@ -14,12 +14,12 @@ const {
   deleteMilestoneFromTask
 } = require('../controllers/taskController')
 
-const requireAuth = require('../middleware/requireAuth')
+//const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router()
 
 // require auth for all task routes
-router.use(requireAuth)
+// router.use(requireAuth)
 
 // GET all tasks
 router.get('/', getTasks)

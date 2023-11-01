@@ -13,7 +13,7 @@ const initialState = tasksAdapter.getInitialState()
 export const tasksApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getTasks: builder.query({
-            query: () => '/tasks',
+            query: () => 'api/tasks',
             validateStatus: (response, result) => {
                 return response.status === 200 && !result.isError
             },

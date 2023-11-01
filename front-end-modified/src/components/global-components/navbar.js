@@ -40,7 +40,14 @@ class Navbar extends Component {
 						<nav>
 						<div className="ltn__main-menu go-top">
 							<ul>
-								<li><Link to="/shop-left-sidebar">Tasks</Link></li>
+													<li><Link to="/shop-left-sidebar">Tasks</Link>
+														<ul>
+															<li>
+																<Link to="/task_details">Tasks Details example</Link>
+																
+															</li>
+														</ul>
+													</li>
 								<li ><Link to="/about">About</Link></li>
 								<li><Link to="/contact">Contact</Link></li>
 							</ul>

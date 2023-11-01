@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\back-end",
+    "\\back-end\\routes",
+    "\\front-end-modified",
+    "\\front-end-modified\\public",
+    "\\front-end-modified\\src",
+    "\\front-end-modified\\src\\app",
+    "\\front-end-modified\\src\\components",
+    "\\front-end-modified\\src\\components\\global-components",
+    "\\front-end-modified\\src\\feature"
+  ],
+  "SelectedNode": "\\back-end\\controllers\\userController.js",
+  "PreviewInSolutionExplorer": false
+}
