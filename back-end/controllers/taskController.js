@@ -43,7 +43,7 @@ const createTask = async (req, res) => {
         images,
         frequency,
         price,
-        priority 
+        priority
         } = req.body
 
     let emptyFields = []
@@ -257,12 +257,20 @@ const filterTasks = async (req, res) => {
 
 const addMilestoneToTask = async (req, res) => {
   const { id } = req.params; // Task id
-  const { title, description, priority } = req.body; // Get title, description and priority from request
+  const { description, priority, status = 'Not Started' } = req.body; // Get title, description, and priority from request
 
   try {
     const updatedTask = await Task.findOneAndUpdate(
       { _id: id },
-      { $push: { milestones: { title, description, priority } } },
+      {
+        $push: {
+          milestones: {
+            description,
+            priority,
+            status
+          }
+        }
+      },
       { new: true }
     );
 
@@ -270,55 +278,73 @@ const addMilestoneToTask = async (req, res) => {
       return res.status(404).json({ error: 'Task does not exist' });
     }
 
+    // Sort milestones by priority
+    updatedTask.milestones.sort((a, b) => {
+      const priorityOrder = ['High', 'Medium', 'Low'];
+      return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
+    });
+
     res.status(200).json({ status: 'success', data: updatedTask });
   } catch (error) {
     res.status(400).json({ status: 'fail', message: error.message });
   }
 }
 
-const markMilestoneAsCompleted = async (req, res) => {
-  const { taskId, milestoneId } = req.params; // Task ID and Milestone ID
-  const { priority } = req.body; // Get the priority in the request
+
+const updateMilestoneStatus = async (req, res) => {
+  const { taskId, milestoneId } = req.params;
+  const { status } = req.body;
 
   try {
     const task = await Task.findById(taskId);
+
     if (!task) {
-      return res.status(404).json({ error: 'Task does not exist' });
+      return res.status(404).json({ error: 'Task not found' });
     }
 
     const milestone = task.milestones.id(milestoneId);
+
     if (!milestone) {
-      return res.status(404).json({ error: 'Milestone does not exist' });
+      return res.status(404).json({ error: 'Milestone not found' });
     }
 
-    milestone.completed = true;
-    milestone.priority = priority; // Set milestone priorities
+    milestone.status = status;
     await task.save();
 
-    res.status(200).json({ status: 'success', data: task });
+    res.status(200).json({
+      message: 'Milestone status updated successfully',
+      milestone: {
+        id: milestone._id,
+        status: milestone.status
+      }
+    });
   } catch (error) {
-    res.status(400).json({ status: 'fail', message: error.message });
+    res.status(500).json({ error: 'Server error' });
   }
 }
 
-const deleteMilestoneFromTask = async (req, res) => {
-  const { taskId, milestoneId } = req.params; // Task ID and Milestone ID
+
+const getMilestonesForTask = async (req, res) => {
+  const { taskId } = req.params;
 
   try {
     const task = await Task.findById(taskId);
-
+    
     if (!task) {
-      return res.status(404).json({ error: 'Task does not exist' });
+      return res.status(404).json({ error: 'Task not found' });
     }
 
-    task.milestones.pull({ _id: milestoneId }); // Remove a milestone with a specific ID from an array of milestones
-    await task.save();
+    const milestones = task.milestones.map(milestone => ({
+      id: milestone._id,
+      description: milestone.description,
+      status: milestone.status
+    }));
 
-    res.status(200).json({ status: 'success', data: task });
+    res.status(200).json({ milestones });
   } catch (error) {
-    res.status(400).json({ status: 'fail', message: error.message });
+    res.status(500).json({ error: 'Server error' });
   }
-};
+}
 
 
 module.exports = {
@@ -331,6 +357,6 @@ module.exports = {
   assignTasker,
   filterTasks,
   addMilestoneToTask,
-  markMilestoneAsCompleted,
-  deleteMilestoneFromTask
+  updateMilestoneStatus,
+  getMilestonesForTask
 }
