@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\back-end",
-    "\\back-end\\routes",
     "\\front-end-modified",
-    "\\front-end-modified\\public",
     "\\front-end-modified\\src",
     "\\front-end-modified\\src\\app",
     "\\front-end-modified\\src\\components",
     "\\front-end-modified\\src\\components\\global-components",
+    "\\front-end-modified\\src\\components\\section-components",
+    "\\front-end-modified\\src\\components\\shop-components",
+    "\\front-end-modified\\src\\components\\task_details",
     "\\front-end-modified\\src\\feature"
   ],
-  "SelectedNode": "\\back-end\\controllers\\userController.js",
+  "SelectedNode": "\\front-end-modified\\src\\components\\section-components\\call-to-action-v1.js",
   "PreviewInSolutionExplorer": false
 }

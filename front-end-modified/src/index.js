@@ -30,7 +30,7 @@ class Root extends Component {
                             <Route path="/my-account" element={ <MyAccount /> } />
                             <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
                             
-                            <Route path="/task-details/:taskId" element={<TaskDetails />} />
+                             
                         </Route>
 	                
                     </Routes>

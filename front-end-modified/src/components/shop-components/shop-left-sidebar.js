@@ -38,7 +38,7 @@ class ShopGridV1 extends Component {
 
         let publicUrl = process.env.PUBLIC_URL+'/'
 		const { tasks } = this.state;
-		console.log('Tasks in state:', tasks);
+		
 
 		return <div>
 			
