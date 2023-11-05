@@ -14,13 +14,13 @@ import Footer from './global-components/footer';
 const Home_V1 = () => {
     return <div>
         <Navbar />
-        <Banner />
+        {/* <Banner />
         
         <Features customClass="ltn__feature-area section-bg-1--- pt-115 pb-90 mb-120---" />
         
         <Testimonial />
         <BlogSlider sectionClass="pt-120" />
-        <CallToActionV1 />
+        <CallToActionV1 /> */}
 
 
         <Footer />

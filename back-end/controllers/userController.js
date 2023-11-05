@@ -2,28 +2,28 @@ const User = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 
 const createToken = (_id) => {
-  return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
+  return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' })
 }
 
 // login a user
 const loginUser = async (req, res) => {
-  const {email, password} = req.body
+  const { email, password } = req.body
 
   try {
     const user = await User.login(email, password)
-
+    const userId = user._id
     // create a token
     const token = createToken(user._id)
 
-    res.status(200).json({email, token})
+    res.status(200).json({ userId, token })
   } catch (error) {
-    res.status(400).json({error: error.message})
+    res.status(400).json({ error: error.message })
   }
 }
 
 // signup a user
 const signupUser = async (req, res) => {
-  const {name, email, password} = req.body
+  const { name, email, password } = req.body
 
   try {
     const user = await User.signup(name, email, password)
@@ -31,20 +31,20 @@ const signupUser = async (req, res) => {
     // create a token
     const token = createToken(user._id)
 
-    res.status(200).json({email, token})
+    res.status(200).json({ email, token })
   } catch (error) {
-    res.status(400).json({error: error.message})
+    res.status(400).json({ error: error.message })
   }
 }
 
 // update profile
 function updateUserProfile(req, res) {
-  const userId = req.user._id; 
+  const userId = req.user._id;
   const updatedData = req.body;
 
   User.findByIdAndUpdate(userId, updatedData, { new: true })
-      .then(user => res.send(user))
-      .catch(err => res.status(400).send(err.message));
+    .then(user => res.send(user))
+    .catch(err => res.status(400).send(err.message));
 }
 
 
@@ -54,8 +54,8 @@ function updateUserProfile(req, res) {
 // Get all users
 function getAllUsers(req, res) {
   User.find({})
-      .then(users => res.send(users))
-      .catch(err => res.status(400).send(err.message));
+    .then(users => res.send(users))
+    .catch(err => res.status(400).send(err.message));
 }
 
 // Update users
@@ -65,8 +65,8 @@ function updateUser(req, res) {
 
   // Use Mongoose to find by ID and update the user with the data from the request body
   User.findByIdAndUpdate(userId, updatedData, { new: true })
-      .then(user => res.send(user))
-      .catch(err => res.status(400).send(err.message));
+    .then(user => res.send(user))
+    .catch(err => res.status(400).send(err.message));
 }
 
 // Delete users
@@ -75,8 +75,8 @@ function deleteUser(req, res) {
 
   // Use Mongoose to find by ID and delete the user
   User.findByIdAndDelete(userId)
-      .then(() => res.send('User deleted successfully'))
-      .catch(err => res.status(400).send(err.message));
+    .then(() => res.send('User deleted successfully'))
+    .catch(err => res.status(400).send(err.message));
 }
 
 // check authentification saparately
@@ -85,20 +85,22 @@ const refresh = async (req, res) => {
   const { authorization } = req.headers
 
   if (!authorization) {
-    return res.status(401).json({error: 'Authorization token required'})
+    return res.status(401).json({ error: 'Authorization token required' })
   }
 
   const token = authorization.split(' ')[1]
+
+  console.log(authorization)
 
   try {
     const { _id } = jwt.verify(token, process.env.SECRET)
 
     req.user = await User.findOne({ _id }).select('_id')
-    res.status(200).json({message: 'refreshed successfully'})
+    res.status(200).json({ message: 'refreshed successfully' })
 
   } catch (error) {
     console.log(error)
-    res.status(401).json({error: 'Request is not authorized'})
+    res.status(401).json({ error: 'Request is not authorized' })
   }
 }
 
@@ -106,12 +108,12 @@ const refresh = async (req, res) => {
 const getUser = async (req, res) => {
   const userId = req.params.userId
   User.findById(userId)
-      .then(user => res.send({name: user.name, email: user.email}))
-      .catch(err => res.status(400).send(err.message));
+    .then(user => res.send({ name: user.name, email: user.email }))
+    .catch(err => res.status(400).send(err.message));
 }
 
 
-module.exports = { 
+module.exports = {
   signupUser,
   loginUser,
   updateUserProfile,

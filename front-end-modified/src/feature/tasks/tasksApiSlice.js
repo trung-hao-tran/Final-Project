@@ -35,7 +35,7 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
         }),
         addNewTask: builder.mutation({
             query: initialTask => ({
-                url: '/tasks',
+                url: 'api/tasks',
                 method: 'POST',
                 body: {
                     ...initialTask,
@@ -47,7 +47,7 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
         }),
         updateTask: builder.mutation({
             query: initialTask => ({
-                url: '/tasks',
+                url: 'api/tasks',
                 method: 'PATCH',
                 body: {
                     ...initialTask,

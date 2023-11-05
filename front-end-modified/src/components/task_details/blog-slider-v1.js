@@ -24,7 +24,7 @@ class BlogSlider extends Component {
 			});
 	}
 
-render() {
+	render() {
 		const { task0, task1, task2, task3, task4 } = this.state;
 		let publicUrl = process.env.PUBLIC_URL + '/'
 		let customClass = this.props.customClass ? this.props.customClass : ''

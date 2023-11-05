@@ -55,7 +55,7 @@ const Register = () => {
 			setEmail('')
 			setPassword('')
 			setConfirmPassword('')
-			navigate('/')
+			navigate('/login')
 		}
 	}, [isSuccess, navigate])
 
@@ -85,12 +85,11 @@ const Register = () => {
 	const errClass = isError ? "errmsg" : "offscreen"
 	const validNameClass = (hasInteractedName && !validName) ? 'form__input--incomplete' : '';
 	const validEmailClass = (hasInteractedEmail && !validEmail) ? 'form__input--incomplete' : '';
+	console.log(error)
 	const validPwdClass = (hasInteractedPassword && !validPassword) ? 'form__input--incomplete' : '';
 	const validConfirmPwdClass = (hasInteractedConfirmPassword && !validConfirmPassword) ? 'form__input--incomplete' : '';
 
 	console.log(validEmailClass)
-
-	let publicUrl = process.env.PUBLIC_URL + '/'
 
 	return <div className="ltn__login-area pb-110">
 		<div className="container">
@@ -100,7 +99,7 @@ const Register = () => {
 						<h1 className="section-title">Sign up <br />Create Your Account</h1>
 						<p>Please enter your information below <br />
 						</p>
-						<p className={errClass}>{error?.data?.message}</p>
+						<p className={errClass}>{error?.data?.error}</p>
 					</div>
 				</div>
 			</div>
