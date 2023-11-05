@@ -11,6 +11,7 @@ const { loginUser,
         deleteUser,
         refresh,
         getUser,
+        getAllUsersWithoutPassword,
     } = require('../controllers/userController')
 
 const router = express.Router()
@@ -37,6 +38,8 @@ router.post('/refresh', refresh);
 
 // Get a single user (helper function for front-end usage)
 router.get('/getuser/:userId', getUser);
+// Get all user (helper function for front-end usage)
+route.get('/getusers/getAllUsers', getAllUsersWithoutPassword);
 
 
 module.exports = router

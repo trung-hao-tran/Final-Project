@@ -5,8 +5,27 @@ const mongoose = require('mongoose')
 
 // get all tasks
 const getTasks = async (req, res) => {
+  // verify user is authenticated
+  const { authorization } = req.headers
+
+  if (!authorization) {
     const tasks = await Task.find({}).sort({createdAt: -1})
     res.status(200).json(tasks)
+  }
+
+  const token = authorization.split(' ')[1]
+
+  try {
+    const { _id } = jwt.verify(token, process.env.SECRET)
+
+    req.user = await User.findOne({ _id }).select('_id')
+    const tasks = await Task.find({user_id: req.user._id}).sort({createdAt: -1})
+    res.status(200).json(tasks)
+
+  } catch (error) {
+    console.log(error)
+    res.status(401).json({error: 'Request is not authorized'})
+  }
 }
 
 // get a single task
@@ -170,6 +189,8 @@ const assignTasker = async (req, res) => {
   const taskId = req.params.taskId
   const taskerId = req.params.taskerId
 
+
+
   // check task exist
   if (!mongoose.Types.ObjectId.isValid(taskId)) {
     return res.status(404).json({error: 'No such task'})
@@ -179,6 +200,10 @@ const assignTasker = async (req, res) => {
 
   if (!task) {
     return res.status(400).json({error: 'No such task'})
+  }
+
+  if (task.user_id !== user_id) {
+    return res.status(400).json({error: 'can not assign tasks not belonging to you!'})
   }
 
   // check if the tasker bids on the task
