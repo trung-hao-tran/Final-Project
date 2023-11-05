@@ -110,7 +110,7 @@ const getUser = async (req, res) => {
       .catch(err => res.status(400).send(err.message));
 }
 
-// Get all users without the password property
+// Get all users without the password property (helper function for front-end)
 function getAllUsersWithoutPassword(req, res) {
   User.find({}, '-password') // Exclude the 'password' field
     .then(users => res.send(users))

@@ -1,0 +1,1147 @@
+API doc 
+
+0. returning error 
+
+Response (JSON):  
+
+{ 
+
+  "error": "error message",
+
+  "status": "error status" 
+
+} 
+
+ 
+ 
+ 
+ 
+
+1. Signup 
+
+ 
+ 
+
+Endpoint: /api/user/signup (POST) 
+
+Purpose: Create a new user account. 
+
+Parameters: None 
+
+Headers: None 
+
+Request Body (JSON): 
+
+{ 
+
+  "username": "example_user", 
+
+  "email": "user@example.com", 
+
+  "password": "password123", 
+
+} 
+
+Response (JSON):  
+
+{ 
+
+  "email": "user@example.com", 
+
+  "token": { 
+
+    " your_auth_token" 
+
+  } 
+
+} 
+
+ 
+ 
+
+2. Login 
+
+ 
+ 
+
+Endpoint: /api/user/login (POST) 
+
+Purpose: Authenticate users and generate a token for subsequent requests. 
+
+Parameters: None 
+
+Headers: None 
+
+Request Body (JSON): 
+
+{ 
+
+    "email": "user@example.com", 
+
+    "password": "password123" 
+
+} 
+
+Response (JSON): 
+
+{ 
+
+    "email": "user@example.com", 
+
+"token": "your_auth_token", 
+
+} 
+
+   
+
+USER MANAGEMENT 
+
+ 
+ 
+
+3. Get all users: 
+
+ 
+ 
+
+Endpoint: /api/user/admin/users/ (GET) 
+
+Purpose: Retrieve basic information about all users. 
+
+Parameters: None. 
+
+Headers: None.
+
+Response (JSON): 
+
+{ 
+
+{	 
+
+    "id": "123456", // User ID 
+
+    "username": "other_user_0", 
+
+    "email": "user0@user.com",
+
+"password": "psw",
+
+"_v": 0, 
+
+"role": "admin"
+
+}, 
+
+{	 
+
+    "id": "123457", // User ID 
+
+    "username": "other_user_1", 
+
+    "email": "user0@user.com", 
+
+"password": "psw", 
+
+"_v": 0, 
+
+"role": "user" 
+
+}, 
+
+... 
+
+} 
+
+ 
+ 
+
+4. Update User Profile 
+
+ 
+ 
+
+Endpoint: /api/users/profile (PUT) 
+
+Purpose: Update user profile information. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+ 
+ 
+
+{ 
+
+    "username": "new_username", 
+
+    "email": "new_email@example.com" 
+
+    "other": "other info" 
+
+    ... 
+
+} 
+
+Response (JSON): 
+
+{ 
+
+    "id": "123456", 
+
+    "username": "new_username", 
+
+    "email": "new_email@example.com", 
+
+    "other": "other info" 
+
+} 
+
+ 
+ 
+
+5. Update password (not complete) 
+
+ 
+ 
+
+Endpoint: /api/users/password (POST) 
+
+Purpose: Update user password. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "password": "password" 
+
+} 
+
+Response (JSON) 
+
+{ 
+
+  "message": "Password changed successfully." 
+
+} 
+
+ 
+
+ 
+
+6. Delete a User 
+
+ 
+ 
+
+Endpoint: /api/user/admin/user/:userId (PUT) 
+
+Purpose: Delete a user by ID. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): Token
+
+Response (JSON) 
+
+{ 
+
+  "message": "User deleted successfully." 
+
+} 
+
+7. get a user without auth (no password returned)
+
+Endpoint: /api/user/getuser/:userId (GET) 
+
+Purpose: Retrieve basic information about all users. 
+
+Parameters: userId. 
+
+Headers: None.
+
+Response (JSON): 
+{	 
+
+    "id": "123457", // User ID 
+
+    "username": "other_user_1", 
+
+    "email": "user0@user.com", 
+
+"_v": 0, 
+
+"role": "user" 
+
+},
+
+
+ 
+7. get all user without auth (no password returned)
+
+Endpoint: /api/user/getusers/getAllUsers (GET) 
+
+Purpose: Retrieve basic information about all users. 
+
+Parameters: None. 
+
+Headers: None.
+
+Response (JSON): 
+
+{ 
+
+{	 
+
+    "id": "123456", // User ID 
+
+    "username": "other_user_0", 
+
+    "email": "user0@user.com",
+
+"_v": 0, 
+
+"role": "admin"
+
+}, 
+
+{	 
+
+    "id": "123457", // User ID 
+
+    "username": "other_user_1", 
+
+    "email": "user0@user.com", 
+
+"_v": 0, 
+
+"role": "user" 
+
+}, 
+
+... 
+
+} 
+ 
+
+ 
+ 
+
+TASKS 
+
+ 
+ 
+
+6. Create a New Task 
+
+ 
+ 
+
+Endpoint: /api/tasks (POST) 
+
+Purpose: Create a new task. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "domain": "Mathematics", 
+
+  "description": "Need help with algebra equations", 
+
+  "media": ["image_url1", "image_url2"], 
+
+  "location": "Online", 
+
+  "status": "Not started yet" 
+
+} 
+
+Response (JSON): 
+
+{ 
+
+  "message": "Learning task created successfully", 
+
+  "task": { 
+
+    "id": "task_id", 
+
+    "domain": "Mathematics", 
+
+    "description": "Need help with algebra equations", 
+
+	"time": { 
+
+		"start": "2023-11-01T08:00:00.000Z", 
+
+		"end": "2023-11-02T17:00:00.000Z" 
+
+	}, 
+
+    "media": ["image_url1", "image_url2"], 
+
+    "location": "Online", 
+
+    "status": "Not started yet", 
+
+    "owner": "user_id", 
+
+    "priority": "Medium", // Default value is Medium 
+
+    "milestones": [] 
+
+  } 
+
+} 
+
+ 
+ 
+
+7. Get a List of Available Learning Tasks (Teacher/Peer) 
+
+ 
+ 
+
+Endpoint: /api/tasks (GET) 
+
+Purpose: Retrieve a list of available learning tasks based on subject and topic. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token) 
+
+Response (JSON): 
+
+{ 
+
+  "tasks": [ 
+
+    { 
+
+		"time": { 
+
+			"start": "2023-11-01T08:00:00.000Z", 
+
+			"end": "2023-11-02T17:00:00.000Z" 
+
+		}, 
+
+      "id": "task_id_1", 
+
+      "domain": "Mathematics", 
+
+      "description": "Need help with algebra equations", 
+
+      "location": "Online", 
+
+      "owner": "user_id", 
+
+      "status": "Not started yet", 
+
+      "priority": "Medium", // Default value is Medium 
+
+      "milestones": [], 
+
+      "createdAt ": "2023-10-29T16:21:38.600Z ", 
+
+      "updatedAt ": "2023-10-31T14:03:11.406Z " 
+
+    }, 
+
+    { 
+
+		"time": { 
+
+			"start": "2023-11-03T08:00:00.000Z", 
+
+			"end": "2023-11-04T17:00:00.000Z" 
+
+		}, 
+
+      "id": "task_id_2", 
+
+      "domain": "Science", 
+
+      "description": "Biology homework assistance needed", 
+
+      "location": "In-person", 
+
+      "owner": "user_id", 
+
+      "status": "Not started yet", 
+
+      "priority": "Medium", // Default value is Medium 
+
+      "milestones": [] 
+
+    } 
+
+  ] 
+
+} 
+
+ 
+ 
+
+8. Get Details of a Specific Task () 
+
+ 
+ 
+
+Endpoint: /api/tasks/:taskId (GET) 
+
+Purpose: Get details of a specific task. 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token) 
+
+Response (JSON): 
+
+{ 
+
+  "task": { 
+
+    "id": "task_id", 
+
+    "domain": "Mathematics", 
+
+    "description": "Need help with algebra equations", 
+
+    "media": ["image_url1", "image_url2"], 
+
+    "location": "Online", 
+
+    "owner": "user_id", 
+
+    "status": "Not started yet", 
+
+    "milestones": [ 
+
+    { 
+
+      "title": "Sprint 2", 
+
+      "description": "Should finish before Week 5", 
+
+      "priority": "High", 
+
+      "status": "Not Started", 
+
+      "_id": "65410df3570441e501371f13", 
+
+      "date": "2023-10-31T14:23:47.688Z" 
+
+    }, 
+
+    { 
+
+      "title": "Sprint 3", 
+
+      "description": "lor", 
+
+      "priority": "Medium", 
+
+      "status": "Not Started", 
+
+      "_id": "6526083fa6de355b1ecdebc9", 
+
+      "date": "2023-10-31T14:23:47.688Z" 
+
+    } 
+
+  ] 
+
+  } 
+
+} 
+
+ 
+ 
+
+9. Update the Status of a Learning Task (Student) 
+
+ 
+ 
+
+Endpoint: /api/tasks/:taskId (PUT) 
+
+Purpose: Update the status of a learning task (e.g., "In Progress" or "Completed"). 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "status": "In Progress" 
+
+} 
+
+Response (JSON): 
+
+{ 
+
+  "message": "Learning task status updated successfully", 
+
+  "task": { 
+
+    "id": "task_id", 
+
+    "status": "In Progress" 
+
+  } 
+
+} 
+
+ 
+ 
+
+10. Submit a Bid on a Learning Task (Teacher/Peer) 
+
+ 
+ 
+
+Endpoint: /api/tasks/:taskId/bid (POST) 
+
+Purpose: Submit a bid on a learning task with a message. 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "message": "I can help you with this task.", 
+
+  "other": "other info" 
+
+} 
+
+Response JSON: 
+
+{ 
+
+  "message": "Bid submitted successfully", 
+
+  "bid": { 
+
+    "id": "bid_id", 
+
+    "taskId": "task_id", 
+
+    "teacherId": "user_id", 
+
+    "message": "I can help you with this task.", 
+
+    "other": "other info" 
+
+  } 
+
+} 
+
+ 
+ 
+
+11. Accept a Bid on a Learning Task (Student) 
+
+ 
+ 
+
+Endpoint: /api/tasks/:taskId/accept-bid (POST) 
+
+Purpose: Accept a bid on a learning task. 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "bidId": "bid_id" 
+
+} 
+
+Response (JSON): 
+
+{ 
+
+  "message": "Bid accepted successfully", 
+
+  "bid": { 
+
+    "id": "bid_id", 
+
+    "status": "Accepted" 
+
+  } 
+
+} 
+
+ 
+ 
+
+MILESTONES: 
+
+ 
+ 
+
+12. Get a List of Milestones for a Specific Task () 
+
+Endpoint: /api/tasks/:Id/milestones (GET) 
+
+Purpose: Retrieve a list of milestones for a specific learning task. 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token) 
+
+Response (JSON): 
+
+{ 
+
+  "milestones": [ 
+
+    { 
+
+      "title": "Sprint 2", 
+
+      "description": "Should finish before Week 5", 
+
+      "priority": "High", 
+
+      "status": "Not Started", 
+
+      "_id": "65410df3570441e501371f13", 
+
+      "date": "2023-10-31T14:23:47.688Z" 
+
+    }, 
+
+    { 
+
+      "title": "Sprint 3", 
+
+      "description": "lor", 
+
+      "priority": "Medium", 
+
+      "status": "Not Started", 
+
+      "_id": "6526083fa6de355b1ecdebc9", 
+
+      "date": "2023-10-31T14:23:47.688Z" 
+
+    } 
+
+  ] 
+
+} 
+
+ 
+
+ 
+ 
+
+13. Create a New Milestone for a Task (Student) 
+
+ 
+ 
+
+Endpoint: /api/tasks/:taskId/milestones (POST) 
+
+Purpose: Create a new milestone for a learning task. 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "title": "Sprint 3", 
+
+  "description": "lor", 
+
+  "priority": "Medium", 
+
+  "status": "Not Started" 
+
+} 
+
+("priority" and "status" does not need to be filled in. The default value of "priority" is "Medium". The value of "priority" should be "Low" or "Medium" or "High".The default value of "status" is "Not Started".) 
+
+RESPONSE (JSON): 
+
+{ 
+
+  "message": "Milestone created successfully", 
+
+  "milestone":  
+
+    { 
+
+      "title": "Sprint 3", 
+
+      "description": " lor ", 
+
+      "priority": " Medium ", 
+
+      "status": "Not Started", 
+
+      "_id": "65410df3570441e501371f13", 
+
+      "date": "2023-10-31T14:23:47.688Z" 
+
+    }, 
+
+} 
+
+ 
+
+ 
+ 
+
+14. Update the Status of a Milestone (Student) 
+
+ 
+ 
+
+Endpoint: /api/tasks/:taskId/milestones/:milestoneId (PUT) 
+
+Purpose: Update the status of a milestone (e.g., "In Progress" or "Completed"). 
+
+Parameters: taskId (Task ID), milestoneId (Milestone ID) 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "status": "In Progress" 
+
+} 
+
+RESPONSE (JSON) 
+
+{ 
+
+  "message": "Milestone status updated successfully", 
+
+  "milestone": { 
+
+    "id": "milestoneId", 
+
+    "status": "In Progress" 
+
+  } 
+
+} 
+
+ 
+ 
+
+Admin: 
+
+ 
+
+15. Get a List of All User Accounts (Admin) 
+
+ 
+ 
+
+Endpoint: /api/admin/users (GET) 
+
+Purpose: Retrieve a list of all user accounts. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token with admin privileges) 
+
+Response (JSON): 
+
+{ 
+
+    "users": [ 
+
+      { 
+
+        "id": "user_id_1",©©©© 
+
+        "username": "user_1", 
+
+        "email": "user1@example.com", 
+
+        "role": "student" 
+
+      }, 
+
+      { 
+
+        "id": "user_id_2", 
+
+        "username": "user_2", 
+
+        "email": "user2@example.com", 
+
+        "role": "teacher" 
+
+      } 
+
+    ] 
+
+  } 
+
+   
+
+16.  Get a List of All Learning Tasks (Admin) 
+
+ 
+ 
+
+Endpoint: /api/admin/tasks (GET) 
+
+Purpose: Retrieve a list of all learning tasks on the platform. 
+
+Parameters: None 
+
+Headers: Authorization (Bearer token with admin privileges) 
+
+Response (JSON): 
+
+{ 
+
+    "tasks": [ 
+
+      { 
+
+        "id": "task_id_1", 
+
+        "domain": "Mathematics", 
+
+        "description": "Need help with algebra equations", 
+
+        "location": "Online", 
+
+        "owner": "user_id_1", 
+
+        "milestones": [ 
+
+          { 
+
+            "id": "milestone_id_1", 
+
+            "description": "Solve basic equations", 
+
+            "status": "Not Started" 
+
+          } 
+
+        ] 
+
+      }, 
+
+      { 
+
+        "id": "task_id_2", 
+
+        "domain": "Science", 
+
+        "description": "Biology homework assistance needed", 
+
+        "location": "In-person", 
+
+        "owner": "user_id_2", 
+
+        "milestones": [ 
+
+          { 
+
+            "id": "milestone_id_2", 
+
+            "description": "Study cells", 
+
+            "status": "Not Started" 
+
+          } 
+
+        ] 
+
+      } 
+
+    ] 
+
+  } 
+
+ 
+ 
+
+17. Delete a Learning Task (Admin) 
+
+ 
+ 
+
+Endpoint: /api/admin/tasks/:taskId (DELETE) 
+
+Purpose: Delete a learning task from the platform. 
+
+Parameters: taskId (Task ID) 
+
+Headers: Authorization (Bearer token with admin privileges) 
+
+Response (JSON): 
+
+{ 
+
+  "message": "Task deleted successfully" 
+
+} 
+
+ 
+
+ 
+
+18. Filter tasks (tasker) 
+
+Endpoint: /api/tasks/filter-tasks (POST) 
+
+Purpose: Filter tasks. 
+
+Parameters: None. 
+
+Headers: Authorization (Bearer token) 
+
+Request Body (JSON): 
+
+{ 
+
+  "title": "NewTitle", 
+
+  "Other info": "other info", 
+
+... 
+
+} 
+
+Response (JSON):						// Fill here with task 
+
+{ 
+
+   
+
+} 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+To be done............
+ 
+
+ 
+
+19. Assign priority levels to different tasks milestones 
+
+ 
+
+20. see dashboard highlighting tasks I posted (student) 
+
+ 
+
+21. rate experience of another user worked with the user 
+
+ 
+
+22. pay the teacher (hypothetical payment, just send a message) 
+
+ 
+
+23. receive the payment from student (hypothetical payment, just send a message) 
+
+ 
+
+24. receive notification of task allocation (teacher) 
+
+ 
+
+25. see dashboard highlighting tasks allocated to me (i.e., the teacher is response for a task) (teacher) 
+
+ 
+
+26. see priority and milestones (teacher) 
+
+ 
+
+27. send message to teachers who bid on my tasks (teacher) 
+
+ 
+
+28. send message to teachers who response for my tasks (teacher) 
+
+ 
+
+29. send message to students whose tasks I response for (teacher) 
+
+ 
+
+30. submit feedback to administrators (all users) 
+
+ 
+
+31. submit feedback to administrators (all users) receive notification of feedback (admin) 
+
+ 
+
+32. view all feedback from users (admin) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
