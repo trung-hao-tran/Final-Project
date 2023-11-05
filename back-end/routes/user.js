@@ -4,18 +4,18 @@ const checkAdmin = require('../middleware/checkAdmin');
 
 // controller functions
 const { loginUser,
-        signupUser,
-        updateUserProfile,
-        getAllUsers,
-        updateUser,
-        deleteUser,
-        refresh,
-        getUser,
-        getAllUsersWithoutPassword,
-    } = require('../controllers/userController')
+    signupUser,
+    updateUserProfile,
+    getAllUsers,
+    updateUser,
+    deleteUser,
+    refresh,
+    getUser,
+    getAllUsersWithoutPassword,
+} = require('../controllers/userController')
 
 const router = express.Router()
- 
+
 // login route
 router.post('/login', loginUser)
 
@@ -39,7 +39,7 @@ router.post('/refresh', refresh);
 // Get a single user (helper function for front-end usage)
 router.get('/getuser/:userId', getUser);
 // Get all user (helper function for front-end usage)
-route.get('/getusers/getAllUsers', getAllUsersWithoutPassword);
+router.get('/getusers/getAllUsers', getAllUsersWithoutPassword);
 
 
 module.exports = router
