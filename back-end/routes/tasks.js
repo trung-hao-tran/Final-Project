@@ -14,7 +14,7 @@ const {
   getMilestonesForTask
 } = require('../controllers/taskController')
 
-//const requireAuth = require('../middleware/requireAuth')
+const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router()
 
@@ -28,19 +28,19 @@ router.get('/', getTasks)
 router.get('/:id', getTask)
 
 // POST a new task
-router.post('/', createTask)
+router.post('/', requireAuth, createTask)
 
 // DELETE a task
-router.delete('/:id', deleteTask)
+router.delete('/:id', requireAuth, deleteTask)
 
 // UPDATE a task
-router.patch('/:id', updateTask)
+router.patch('/:id', requireAuth, updateTask)
 
 // GET all taskers bidding on a given task
 router.get('/taskers/:id', getTaskers)
 
 // assign a tasker to complete a task
-router.post('/taskers/:taskId/:taskerId', assignTasker)
+router.post('/taskers/:taskId/:taskerId', requireAuth, assignTasker)
 // filter tasks
 router.post('/filter-tasks', filterTasks)
 
