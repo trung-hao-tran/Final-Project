@@ -62,7 +62,8 @@ const createTask = async (req, res) => {
         images,
         frequency,
         price,
-        priority
+        priority,
+        domain_knowledge,
         } = req.body
 
     let emptyFields = []
@@ -94,6 +95,7 @@ const createTask = async (req, res) => {
   to_create.price = price
   to_create.priority = priority
   to_create.user_id = user_id.toString()
+  to_create.domain_knowledge = domain_knowledge
   if(categories) {
     to_create.categories = categories
   }

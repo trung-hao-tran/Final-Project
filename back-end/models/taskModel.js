@@ -54,6 +54,10 @@ const taskSchema = new Schema({
     enum: ['Low', 'Medium', 'High'],
     default: 'Medium'
   },
+  domain_knowledge: {
+    type: [String],
+    default: []
+  },
   milestones:[
     {
       description: String,
