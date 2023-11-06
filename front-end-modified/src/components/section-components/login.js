@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../feature/auth/authApiSlice";
 import { useNavigate } from "react-router-dom";
-import { setCredentials, setAuthenticated } from "../../feature/auth/authSlice";
+import {
+  setCredentials,
+  setAuthenticated,
+  setUserId,
+} from "../../feature/auth/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,6 +30,7 @@ const Login = () => {
       } else {
         dispatch(setCredentials(result));
         dispatch(setAuthenticated(true));
+        dispatch(setUserId(result.userId));
         // Login successful, redirect or update UI as needed
         console.log("Login successful");
 

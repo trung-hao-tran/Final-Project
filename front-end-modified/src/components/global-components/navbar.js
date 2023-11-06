@@ -4,15 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { setAuthenticated, setCredentials } from "../../feature/auth/authSlice";
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogOut = () => {
+    console.log("handle log out");
     localStorage.clear();
     dispatch(setAuthenticated(false));
     dispatch(setCredentials(null));
-    navigate("/login");
   };
 
   return (

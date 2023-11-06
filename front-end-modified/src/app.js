@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import HomeV1 from "./components/home-v1";
 
@@ -12,7 +12,11 @@ import Login from "./components/login";
 import Register from "./components/register";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setAuthenticated, setCredentials } from "./feature/auth/authSlice";
+import {
+  setAuthenticated,
+  setCredentials,
+  setUserId,
+} from "./feature/auth/authSlice";
 import AddTask from "./components/add-task";
 
 const App = () => {
@@ -23,11 +27,13 @@ const App = () => {
   useEffect(() => {
     const checkRefresh = async () => {
       const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
 
-      if (!token) {
+      if (!token && !userId) {
         localStorage.clear();
         console.log("clear");
         dispatch(setAuthenticated(false));
+
         return;
       }
       if (token) {
@@ -44,7 +50,7 @@ const App = () => {
 
           if (response.ok) {
             dispatch(setAuthenticated(true));
-
+            dispatch(setUserId(userId));
             dispatch(setCredentials({ token: token }));
 
             return;
@@ -77,6 +83,9 @@ const App = () => {
         <>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* Redirect users trying to access protected routes to the login page */}
+          <Route path="/add-task" element={<Navigate to="/login" />} />
+          <Route path="/profile" element={<Navigate to="/login" />} />
         </>
       )}
     </Routes>
