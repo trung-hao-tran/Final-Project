@@ -363,7 +363,7 @@ Request Body (JSON):
 
   "media": ["image_url1", "image_url2"], 
 
-  "location": "Online", 
+  "address": "Online", 
 
   "status": "Not started yet" 
 
@@ -393,7 +393,7 @@ Response (JSON):
 
     "media": ["image_url1", "image_url2"], 
 
-    "location": "Online", 
+    "address": "Online", 
 
     "status": "Not started yet", 
 
@@ -445,7 +445,7 @@ Response (JSON):
 
       "description": "Need help with algebra equations", 
 
-      "location": "Online", 
+      "address": "Online", 
 
       "owner": "user_id", 
 
@@ -477,7 +477,7 @@ Response (JSON):
 
       "description": "Biology homework assistance needed", 
 
-      "location": "In-person", 
+      "address": "In-person", 
 
       "owner": "user_id", 
 
@@ -523,7 +523,7 @@ Response (JSON):
 
     "media": ["image_url1", "image_url2"], 
 
-    "location": "Online", 
+    "address": "Online", 
 
     "owner": "user_id", 
 
@@ -942,7 +942,7 @@ Response (JSON):
 
         "description": "Need help with algebra equations", 
 
-        "location": "Online", 
+        "address": "Online", 
 
         "owner": "user_id_1", 
 
@@ -970,7 +970,7 @@ Response (JSON):
 
         "description": "Biology homework assistance needed", 
 
-        "location": "In-person", 
+        "address": "In-person", 
 
         "owner": "user_id_2", 
 
@@ -1090,7 +1090,7 @@ To be done............
 
  
 
-24. receive notification of task allocation (teacher) 
+24. receive notification of task aladdress (teacher) 
 
  
 

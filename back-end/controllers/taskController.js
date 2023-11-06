@@ -2,6 +2,7 @@ const Task = require('../models/taskModel')
 const User = require('../models/userModel')
 const Bid = require('../models/bidModel')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 
 // get all tasks
 const getTasks = async (req, res) => {
@@ -57,7 +58,7 @@ const createTask = async (req, res) => {
         title,
         description,
         categories,
-        location,
+        address,
         time,
         images,
         frequency,
@@ -99,8 +100,8 @@ const createTask = async (req, res) => {
   if(categories) {
     to_create.categories = categories
   }
-  if(location) {
-    to_create.location = location
+  if(address) {
+    to_create.address = address
   }
   if(images) {
     to_create.images = images
@@ -233,7 +234,7 @@ const assignTasker = async (req, res) => {
 // filter tasks
 const filterTasks = async (req, res) => {
   try {
-    const { title, categories, location, time, frequency, price } = req.body
+    const { title, categories, address, time, frequency, price } = req.body
     const query = {};
 
     if (title && title.length > 0) {
@@ -246,8 +247,8 @@ const filterTasks = async (req, res) => {
       };
     }
 
-    if (location && location.length > 0) {
-      query.location = new RegExp(location, 'i');
+    if (address && address.length > 0) {
+      query.address = new RegExp(address, 'i');
     }
 
     // filter by two time points
