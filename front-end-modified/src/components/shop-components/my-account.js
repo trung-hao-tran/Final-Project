@@ -1,13 +1,39 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/iframe-has-title */
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
+import { useGetCurrentUserMutation } from "../../feature/users/usersApiSlice";
+import { setCurrentUser } from "../../feature/users/userSlice";
+import toast, { Toaster } from "react-hot-toast";
+import MyAccountForm from "./my-account-form";
 const MyAccount = () => {
-  const checkState = useSelector((state) => state);
-  console.log("checkState", checkState);
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth.userId);
+
+  const [getCurrentUser] = useGetCurrentUserMutation();
+  useEffect(() => {
+    const fetchCurrentUserObject = async () => {
+      try {
+        const currentUser = await getCurrentUser(userId);
+
+        if (currentUser.data) {
+          dispatch(setCurrentUser(currentUser.data));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(`Error: ${error}`);
+        dispatch(setCurrentUser(null));
+      }
+    };
+    fetchCurrentUserObject();
+  }, []);
+
+  const userData = useSelector((state) => state.users.user);
+  console.log("userData", userData);
   let publicUrl = process.env.PUBLIC_URL + "/";
 
   return (
@@ -53,8 +79,8 @@ const MyAccount = () => {
                       >
                         <div className="ltn__myaccount-tab-content-inner">
                           <p>
-                            Hello <strong>UserName</strong> (not{" "}
-                            <strong>UserName</strong>?{" "}
+                            Hello <strong>{userData?.name}</strong> ( not{" "}
+                            <strong>{userData?.name}</strong>?{" "}
                             <small>
                               <a href="login.html">Log out</a>
                             </small>{" "}
@@ -84,7 +110,7 @@ const MyAccount = () => {
                               </div>
                               <div className="author-info">
                                 <h6>User</h6>
-                                <h2>Tran Trung Hao</h2>
+                                <h2>{userData?.name}</h2>
                                 <div className="footer-address">
                                   <ul>
                                     <li>
@@ -92,9 +118,7 @@ const MyAccount = () => {
                                         <i className="icon-placeholder" />
                                       </div>
                                       <div className="footer-address-info">
-                                        <p>
-                                          Kensington, New South Wales, Australia
-                                        </p>
+                                        <p>{userData?.location}</p>
                                       </div>
                                     </li>
                                     <li>
@@ -104,7 +128,7 @@ const MyAccount = () => {
                                       <div className="footer-address-info">
                                         <p>
                                           <a href="tel:+0123-456789">
-                                            +0123-456789
+                                            {userData?.phone}
                                           </a>
                                         </p>
                                       </div>
@@ -116,7 +140,7 @@ const MyAccount = () => {
                                       <div className="footer-address-info">
                                         <p>
                                           <a href="mailto:trunghao2000@gmail.com">
-                                            trunghao2000@gmail.com
+                                            {userData?.email}
                                           </a>
                                         </p>
                                       </div>
@@ -126,69 +150,13 @@ const MyAccount = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="ltn__form-box">
-                            <form action="#">
-                              <div className="row mb-50">
-                                <div className="col-md-6">
-                                  <label>First name:</label>
-                                  <input type="text" name="ltn__name" />
-                                </div>
-                                <div className="col-md-6">
-                                  <label>Last name:</label>
-                                  <input type="text" name="ltn__lastname" />
-                                </div>
-                                <div className="col-md-6">
-                                  <label>Location:</label>
-                                  <input
-                                    type="text"
-                                    name="ltn__lastname"
-                                    placeholder="Kensington"
-                                  />
-                                </div>
-                                <div className="col-md-6">
-                                  <label>Display Email:</label>
-                                  <input
-                                    type="email"
-                                    name="ltn__lastname"
-                                    placeholder="trunghao2000@gmail.com"
-                                  />
-                                </div>
-                              </div>
-                              <fieldset>
-                                <legend>Password change</legend>
-                                <div className="row">
-                                  <div className="col-md-12">
-                                    <label>
-                                      Current password (leave blank to leave
-                                      unchanged):
-                                    </label>
-                                    <input type="password" name="ltn__name" />
-                                    <label>
-                                      New password (leave blank to leave
-                                      unchanged):
-                                    </label>
-                                    <input
-                                      type="password"
-                                      name="ltn__lastname"
-                                    />
-                                    <label>Confirm new password:</label>
-                                    <input
-                                      type="password"
-                                      name="ltn__lastname"
-                                    />
-                                  </div>
-                                </div>
-                              </fieldset>
-                              <div className="btn-wrapper">
-                                <button
-                                  type="submit"
-                                  className="btn theme-btn-1 btn-effect-1 text-uppercase"
-                                >
-                                  Save Changes
-                                </button>
-                              </div>
-                            </form>
-                          </div>
+                          {userData ? (
+                            <>
+                              <MyAccountForm user={userData} />
+                            </>
+                          ) : (
+                            <></>
+                          )}
                         </div>
                       </div>
                       <div className="tab-pane fade" id="ltn_tab_1_5">
@@ -1534,6 +1502,7 @@ const MyAccount = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };

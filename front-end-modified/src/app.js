@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Routes, Route, Navigate } from "react-router-dom";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import HomeV1 from "./components/home-v1";
 
 import Prefetch from "./feature/auth/prefetch";
@@ -23,7 +23,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+  const [loading, setLoading] = useState(true); // Add a loading state
   useEffect(() => {
     const checkRefresh = async () => {
       const token = localStorage.getItem("token");
@@ -61,12 +61,18 @@ const App = () => {
           console.error("Token refresh error:", error);
           localStorage.clear();
           dispatch(setAuthenticated(false));
+        } finally {
+          setLoading(false); // Set loading to false after the token check
         }
       }
     };
 
     checkRefresh();
   }, []);
+
+  if (loading) {
+    return <div>...</div>; // Or some loading spinner
+  }
 
   return (
     <Routes>
