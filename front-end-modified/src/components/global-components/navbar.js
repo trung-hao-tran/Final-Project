@@ -32,26 +32,6 @@ const Navbar = () => {
 							</div>
 
 						</div>
-						<div className="col header-menu-column">
-							<div className="header-menu d-none d-xl-block">
-								<nav>
-									<div className="ltn__main-menu go-top">
-										<ul>
-											<li><Link to="/shop-left-sidebar">Tasks</Link>
-												<ul>
-													<li>
-														<Link to="/task_details">Tasks Details example</Link>
-
-													</li>
-												</ul>
-											</li>
-											<li ><Link to="/about">About</Link></li>
-											<li><Link to="/contact">Contact</Link></li>
-										</ul>
-									</div>
-								</nav>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div className="ltn__header-middle-area ltn__header-sticky ltn__sticky-bg-white">
@@ -91,7 +71,7 @@ const Navbar = () => {
 													<li><Link to="/login">Log in</Link></li>
 													<li><Link to="/register">Register</Link></li>
 												</> : <>
-													<li><Link to="/my-account">My Account</Link></li>
+													<li><Link to="/profile">My Account</Link></li>
 													<li><Link to="/add-task">Add Task</Link></li>
 													<li><Link onClick={handleLogOut}>Log out</Link></li>
 												</>}

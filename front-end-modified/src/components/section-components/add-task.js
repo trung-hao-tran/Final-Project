@@ -12,6 +12,7 @@ const AddTask = () => {
     }] = useAddNewTaskMutation()
 
     const userId = localStorage.getItem("userId")
+    const today = new Date().toISOString().slice(0, 16);
 
     const navigate = useNavigate()
     const [title, setTitle] = useState('');
@@ -19,8 +20,9 @@ const AddTask = () => {
     const [media, setMedia] = useState(null);
     const [address, setAddress] = useState('');
     const [domainKnowledge, setDomainKnowledge] = useState([]);
-    const [levelOfKnowledge, setLevelOfKnowledge] = useState('');
-    const [deadline, setDeadline] = useState('');
+    const [frequency, setFrequency] = useState('None');
+    const [endTime, setEndTime] = useState('');
+    const [startTime, setStartTime] = useState(today);
     const [price, setPrice] = useState('');
 
     const [validTitle, setValidTitle] = useState(false);
@@ -28,8 +30,8 @@ const AddTask = () => {
     const [validMedia, setValidMedia] = useState(false);
     const [validAddress, setValidAddress] = useState(false);
     const [validDomainKnowledge, setValidDomainKnowledge] = useState(false);
-    const [validLevelOfKnowledge, setValidLevelOfKnowledge] = useState(false);
-    const [validDeadline, setValidDeadline] = useState(false);
+    const [validEndTime, setValidEndTime] = useState(false);
+    const [validStartTime, setValidStartTime] = useState(false);
     const [validPrice, setValidPrice] = useState(false);
 
     useEffect(() => {
@@ -54,16 +56,19 @@ const AddTask = () => {
         // console.log(validDomainKnowledge)
     }, [domainKnowledge]);
 
-    useEffect(() => {
-        setValidLevelOfKnowledge(levelOfKnowledge.length > 0)
-        console.log(validLevelOfKnowledge)
-    }, [levelOfKnowledge])
+
 
     useEffect(() => {
-        // Check if the deadline is a valid time (you can use a regular expression or a time library)
-        setValidDeadline(new Date(deadline) instanceof Date && !isNaN(new Date(deadline)));
-        // console.log(validDeadline)
-    }, [deadline]);
+        // Check if the endTime is a valid time (you can use a regular expression or a time library)
+        setValidEndTime(new Date(endTime) instanceof Date && !isNaN(new Date(endTime)));
+        // console.log(validEndTime)
+    }, [endTime]);
+
+    useEffect(() => {
+        // Check if the endTime is a valid time (you can use a regular expression or a time library)
+        setValidStartTime(new Date(startTime) instanceof Date && !isNaN(new Date(startTime)));
+        // console.log(validEndTime)
+    }, [startTime]);
 
     useEffect(() => {
         // Check if the price is a valid number
@@ -92,34 +97,42 @@ const AddTask = () => {
         }
     };
 
-    const handleDeadlineChange = (e) => {
-        setDeadline(e.target.value);
+    const handleFrequencyChange = (e) => {
+        console.log(e.target.value)
+        setFrequency(e.target.value);
     };
+
+    const handleEndTimeChange = (e) => {
+        setEndTime(e.target.value);
+    };
+
+    const handleStartTimeChange = (e) => {
+        setStartTime(e.target.value);
+    }
 
     const handlePriceChange = (e) => {
         setPrice(e.target.value);
     };
 
-    const handleLevelOfKnowledgeChange = (e) => {
-        console.log(e.target.value)
-        setLevelOfKnowledge(e.target.value);
-    };
-
-    const canSave = [validTitle, validDescription, validAddress, validDomainKnowledge, validLevelOfKnowledge, validDeadline, validPrice].every(Boolean) && !isLoading
-    console.log(levelOfKnowledge)
+    const canSave = [validTitle, validDescription, validAddress, validDomainKnowledge, validEndTime, validPrice, validStartTime].every(Boolean) && !isLoading
+    console.log(canSave)
     const onSubmitUserClicked = async (e) => {
         e.preventDefault()
-        if (canSave) {
-            console.log('Form Data:', {
-                title,
-                description,
-                address,
-                domainKnowledge,
-                levelOfKnowledge,
-                deadline,
-                price,
-            });
+        console.log(frequency)
+        // if (canSave) {
+        const time = {
+            start: startTime,
+            end: endTime
         }
+        // console.log('Form Data:', {
+        //     title,
+        //     description,
+        //     address,
+        //     domainKnowledge,
+        //     time,
+        //     price,
+        // });
+        // }
     }
 
     const errClass = isError ? "errmsg" : "offscreen"
@@ -127,8 +140,8 @@ const AddTask = () => {
     const validTitleClass = validTitle ? '' : 'form__input--incomplete';
     const validDescriptionClass = validDescription ? '' : 'form__input--incomplete';
     const validAddressClass = validAddress ? '' : 'form__input--incomplete';
-    const validLevelOfKnowledgeClass = validLevelOfKnowledge ? '' : 'form__input--incomplete';
-    const validDeadlineClass = validDeadline ? '' : 'form__input--incomplete';
+    const validEndTimeClass = validEndTime ? '' : 'form__input--incomplete';
+    const validStartTimeClass = validStartTime ? '' : 'form__input--incomplete';
     const validPriceClass = validPrice ? '' : 'form__input--incomplete';
 
 
@@ -138,7 +151,7 @@ const AddTask = () => {
                 <div className="row">
                     <div className="col-lg-12">
                         <div className="ltn__appointment-inner">
-                            <form action="#">
+                            <form action="#" onSubmit={onSubmitUserClicked}>
                                 <p className={errClass}>{error?.data?.error}</p>
                                 {/* Section 1: Description */}
                                 <h2>1. Title and Description</h2>
@@ -200,7 +213,8 @@ const AddTask = () => {
                                                 onChange={handleAddressChange}
                                                 type="text"
                                                 name="address"
-                                                placeholder="*Address" />
+                                                placeholder="*Address"
+                                                autoComplete='off' />
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
@@ -287,50 +301,86 @@ const AddTask = () => {
                                             <span className="checkmark" />
                                         </label>
                                     </div>
-                                </div>
+                                </div><br></br>
 
-                                {/* Section5: Level of Knowledge Required */}
-                                <h2>5. Level of Knowledge Required</h2>
-                                <h6>Select the Level of Knowledge Required for the Task</h6>
+
+
+                                {/* Section 6: EndTime */}
                                 <div className="row">
-                                    <div className="col-lg-12">
-                                        <div className="input-item">
-                                            <select name="levelOfKnowledge" value={levelOfKnowledge} className={`nice-select form__input ${validLevelOfKnowledgeClass}`} onChange={handleLevelOfKnowledgeChange}>
-                                                <option value="" disabled selected>Select Level</option>
-                                                <option value="Elementary Knowledge">Elementary Knowledge</option>
-                                                <option value="High School Level">High School Level</option>
-                                                <option value="University Level">University Level</option>
-                                                {/* Add more options as needed */}
-                                            </select>
+                                    <div className=" row col-lg-12">
+                                        <h2>5. Time</h2>
+                                        <div className="col-lg-6">
+                                            <h6>Set the start time for the Task</h6>
+                                            <div className="input-item input-item-date ltn__custom-icon">
+                                                <input className={`form__input ${validStartTimeClass}`} onChange={handleStartTimeChange} type="datetime-local" name="startTime" placeholder="startTime" min={today} defaultValue={today} />
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-6">
+                                            <h6>Set the EndTime for the Task</h6>
+                                            <div className="input-item input-item-date ltn__custom-icon">
+                                                <input className={`form__input ${validEndTimeClass}`} onChange={handleEndTimeChange} type="datetime-local" name="endTime" placeholder="EndTime" min={startTime} />
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
 
-
-                                {/* Section 6: Deadline */}
+                                {/* Section 6: Task Frequency */}
                                 <div className="row">
                                     <div className="col-lg-6">
-                                        <h2>6. Deadline</h2>
-                                        <h6>Set the Deadline for the Task</h6>
-                                        <div className="input-item input-item-date ltn__custom-icon">
-                                            <input className={`form__input ${validDeadlineClass}`} onChange={handleDeadlineChange} type="date" name="deadline" placeholder="Deadline" />
+                                        <h2>5. Task Frequency</h2>
+                                        <h6>Select the Task Frequency</h6>
+                                        <div className="col-lg-4 col-md-6">
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    name="frequency"
+                                                    value="None"
+                                                    checked={frequency === 'None'}
+                                                    onChange={handleFrequencyChange}
+                                                />
+                                                None
+                                            </label>
+                                        </div>
+                                        <div className="col-lg-4 col-md-6">
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    name="frequency"
+                                                    value="Daily"
+                                                    checked={frequency === 'Daily'}
+                                                    onChange={handleFrequencyChange}
+                                                />
+                                                Daily
+                                            </label>
+                                        </div>
+                                        <div className="col-lg-4 col-md-6">
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    name="frequency"
+                                                    value="Weekly"
+                                                    checked={frequency === 'Weekly'}
+                                                    onChange={handleFrequencyChange}
+                                                />
+                                                Weekly
+                                            </label>
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
                                         <h2>7. Price</h2>
                                         <h6>Set the Price for the Task</h6>
                                         <div className="input-item input-item-money ltn__custom-icon">
-                                            <input type="text" className={`form__input ${validPriceClass}`} onChange={handlePriceChange} name="ltn__name" placeholder="Price in $ (only numbers)" />
+                                            <input type="text" className={`form__input ${validPriceClass}`} onChange={handlePriceChange} name="ltn__name" placeholder="Price in $ (only numbers)" autoComplete='off' />
                                         </div>
                                     </div>
                                 </div>
 
-
                                 {/* Submit Button */}
                                 <div className="btn-wrapper text-center mt-30">
                                     <button
-                                        disabled={!canSave}
-                                        onClick={onSubmitUserClicked}
+                                        // disabled={!canSave}
+                                        // onClick={onSubmitUserClicked}
                                         className="btn theme-btn-1 btn-effect-1 text-uppercase"
                                         type="submit"
                                     >

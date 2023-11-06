@@ -1042,7 +1042,7 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="submit"],
-input[type="date"],
+input[type="datetime-local"],
 textarea {
   background-color: var(--white);
   border: 2px solid;
@@ -1059,7 +1059,7 @@ textarea {
   padding-right: 40px;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   position: absolute;
   top: 0;
