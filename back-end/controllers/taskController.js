@@ -10,8 +10,9 @@ const getTasks = async (req, res) => {
   const { authorization } = req.headers
 
   if (!authorization) {
-    const tasks = await Task.find({}).sort({createdAt: -1})
+    const tasks = await Task.find({}).sort({ createdAt: -1 })
     res.status(200).json(tasks)
+    return
   }
 
   const token = authorization.split(' ')[1]
@@ -20,12 +21,12 @@ const getTasks = async (req, res) => {
     const { _id } = jwt.verify(token, process.env.SECRET)
 
     req.user = await User.findOne({ _id }).select('_id')
-    const tasks = await Task.find({user_id: req.user._id}).sort({createdAt: -1})
+    const tasks = await Task.find({ user_id: req.user._id }).sort({ createdAt: -1 })
     res.status(200).json(tasks)
 
   } catch (error) {
     console.log(error)
-    res.status(401).json({error: 'Request is not authorized'})
+    res.status(401).json({ error: 'Request is not authorized' })
   }
 }
 
@@ -33,13 +34,13 @@ const getTasks = async (req, res) => {
 const getTask = async (req, res) => {
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({error: 'No such task'})
+    return res.status(404).json({ error: 'No such task' })
   }
 
   const task = await Task.findById(id)
 
   if (!task) {
-    return res.status(404).json({error: 'No such task'})
+    return res.status(404).json({ error: 'No such task' })
   }
   res.status(200).json(task)
 }
@@ -48,43 +49,43 @@ const getTask = async (req, res) => {
 // create new task
 const createTask = async (req, res) => {
   if (req.user !== null) {
-  const user_id = req.user._id
-}
-  else{
+    const user_id = req.user._id
+  }
+  else {
     res.status(400).json("the user does not exist")
   }
   const user_id = req.user._id
-    const {
-        title,
-        description,
-        categories,
-        address,
-        time,
-        images,
-        frequency,
-        price,
-        priority,
-        domain_knowledge,
-        } = req.body
+  const {
+    title,
+    description,
+    categories,
+    address,
+    time,
+    images,
+    frequency,
+    price,
+    priority,
+    domain_knowledge,
+  } = req.body
 
-    let emptyFields = []
+  let emptyFields = []
 
-  if(!title) {
+  if (!title) {
     emptyFields.push('title')
   }
-  if(!description) {
+  if (!description) {
     emptyFields.push('description')
   }
-  if(!time.start || !time.end) {
+  if (!time.start || !time.end) {
     emptyFields.push('time')
   }
-  if(!frequency) {
+  if (!frequency) {
     emptyFields.push('frequency')
   }
-  if(!price) {
+  if (!price) {
     emptyFields.push('price')
   }
-  if(emptyFields.length > 0) {
+  if (emptyFields.length > 0) {
     return res.status(400).json({ error: 'Please fill in all the fields', emptyFields })
   }
 
@@ -97,13 +98,13 @@ const createTask = async (req, res) => {
   to_create.priority = priority
   to_create.user_id = user_id.toString()
   to_create.domain_knowledge = domain_knowledge
-  if(categories) {
+  if (categories) {
     to_create.categories = categories
   }
-  if(address) {
+  if (address) {
     to_create.address = address
   }
-  if(images) {
+  if (images) {
     to_create.images = images
   }
 
@@ -113,7 +114,7 @@ const createTask = async (req, res) => {
     const task = await Task.create(to_create)
     res.status(200).json(task)
   } catch (error) {
-    res.status(400).json({error: error.message})
+    res.status(400).json({ error: error.message })
   }
 }
 
@@ -123,19 +124,19 @@ const deleteTask = async (req, res) => {
   const { id } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({error: 'No such task'})
+    return res.status(404).json({ error: 'No such task' })
   }
 
   const task = await Task.findById(id)
 
   if (!task) {
-    return res.status(400).json({error: 'No such task'})
+    return res.status(400).json({ error: 'No such task' })
   }
 
-  if (user_id.toString() !== task.user_id && user_id.toString() !==process.env.ADMINID) {
-    return res.status(401).json({error: 'No authority'})
+  if (user_id.toString() !== task.user_id && user_id.toString() !== process.env.ADMINID) {
+    return res.status(401).json({ error: 'No authority' })
   }
-  const taskReturn = await Task.findOneAndDelete({_id: id})
+  const taskReturn = await Task.findOneAndDelete({ _id: id })
 
   res.status(200).json(taskReturn)
 }
@@ -146,22 +147,22 @@ const updateTask = async (req, res) => {
   const { id } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({error: 'No such task'})
+    return res.status(404).json({ error: 'No such task' })
   }
 
   const task = await Task.findById(id)
 
   if (!task) {
-    return res.status(400).json({error: 'No such task'})
+    return res.status(400).json({ error: 'No such task' })
   }
 
   //console.log(task.user_id.toString(), "admin", process.env.ADMINID)
   if (user_id.toString() !== task.user_id && task.user_id.toString() !== process.env.ADMINID) {
-    return res.status(401).json({error: 'No authority'})
+    return res.status(401).json({ error: 'No authority' })
   }
-  const taskReturn = await Task.findOneAndUpdate({_id: id}, {
+  const taskReturn = await Task.findOneAndUpdate({ _id: id }, {
     ...req.body
-  }, {new: true})
+  }, { new: true })
 
   res.status(200).json(taskReturn)
 }
@@ -170,12 +171,12 @@ const updateTask = async (req, res) => {
 const getTaskers = async (req, res) => {
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({error: 'No such task'})
+    return res.status(404).json({ error: 'No such task' })
   }
-  const bids = await Bid.find({task_id: id})
+  const bids = await Bid.find({ task_id: id })
 
   if (!bids) {
-    return res.status(404).json({error: 'No bid yet!'})
+    return res.status(404).json({ error: 'No bid yet!' })
   }
 
   taskers = []
@@ -196,38 +197,38 @@ const assignTasker = async (req, res) => {
 
   // check task exist
   if (!mongoose.Types.ObjectId.isValid(taskId)) {
-    return res.status(404).json({error: 'No such task'})
+    return res.status(404).json({ error: 'No such task' })
   }
 
   const task = await Task.findById(taskId)
 
   if (!task) {
-    return res.status(400).json({error: 'No such task'})
+    return res.status(400).json({ error: 'No such task' })
   }
 
   if (task.user_id !== user_id) {
-    return res.status(400).json({error: 'can not assign tasks not belonging to you!'})
+    return res.status(400).json({ error: 'can not assign tasks not belonging to you!' })
   }
 
   // check if the tasker bids on the task
   if (!mongoose.Types.ObjectId.isValid(taskerId)) {
-    return res.status(404).json({error: 'No such tasker'})
+    return res.status(404).json({ error: 'No such tasker' })
   }
 
   const tasker = await Task.findById(taskerId)
 
   if (!tasker) {
-    return res.status(400).json({error: 'No such tasker'})
+    return res.status(400).json({ error: 'No such tasker' })
   }
 
-  const bid = await Bid.findOne({task_id: taskId, user_id: taskerId})
+  const bid = await Bid.findOne({ task_id: taskId, user_id: taskerId })
 
   if (!bid) {
-    return res.status(400).json({error: 'the tasker have no bid on the task'})
+    return res.status(400).json({ error: 'the tasker have no bid on the task' })
   }
 
   // assign tasker to the task
-  const taskReturn = await Task.findOneAndUpdate({_id: taskId}, {taskerId: taskerId}, {new: true})
+  const taskReturn = await Task.findOneAndUpdate({ _id: taskId }, { taskerId: taskerId }, { new: true })
   res.status(200).json(taskReturn)
 }
 
@@ -277,9 +278,9 @@ const filterTasks = async (req, res) => {
 
     const tasks = await Task.find(query);
     res.status(200).json(tasks);
-  
+
   } catch (error) {
-    res.status(400).json({error: 'server error'})
+    res.status(400).json({ error: 'server error' })
   }
 }
 
@@ -357,7 +358,7 @@ const getMilestonesForTask = async (req, res) => {
 
   try {
     const task = await Task.findById(taskId);
-    
+
     if (!task) {
       return res.status(404).json({ error: 'Task not found' });
     }
