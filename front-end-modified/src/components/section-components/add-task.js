@@ -1,8 +1,23 @@
 import React, { useDebugValue, useEffect, useState } from 'react';
 import { useAddNewTaskMutation } from '../../feature/tasks/tasksApiSlice';
 import { useNavigate } from 'react-router-dom';
+import {
+    useJsApiLoader,
+    GoogleMap,
+    Marker,
+    Autocomplete
+} from '@react-google-maps/api'
 
+
+let current = { lat: -33.9175, lng: 151.2303 }; // UNSW coordinates
+const libraries = ["places"]
 const AddTask = () => {
+
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: "AIzaSyAlmLd3YzM-XIYXoShEWcvTy6OhyJaDzb8",
+        libraries: libraries,
+    });
+
 
     const [addNewTask, {
         isLoading,
@@ -11,21 +26,22 @@ const AddTask = () => {
         error
     }] = useAddNewTaskMutation()
 
-    const userId = localStorage.getItem("userId")
     const today = new Date().toISOString().slice(0, 16);
 
     const navigate = useNavigate()
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [media, setMedia] = useState(null);
+    const [media, setMedia] = useState([]);
     const [address, setAddress] = useState('');
     const [domainKnowledge, setDomainKnowledge] = useState([]);
     const [frequency, setFrequency] = useState('Daily');
     const [endTime, setEndTime] = useState('');
     const [startTime, setStartTime] = useState(today);
     const [price, setPrice] = useState('');
+    const [map, setMap] = useState(/** @type google.maps.Map */(null))
 
     const [validTitle, setValidTitle] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [validDescription, setValidDescription] = useState(false);
     const [validMedia, setValidMedia] = useState(false);
     const [validAddress, setValidAddress] = useState(false);
@@ -36,24 +52,20 @@ const AddTask = () => {
 
     useEffect(() => {
         setValidTitle(title.length > 0);
-        // console.log(validTitle)
     }, [title])
 
     useEffect(() => {
         setValidDescription(description.length > 0);
-        // console.log(validDescription)
     }, [description])
 
     useEffect(() => {
         // Address validation (example: checking if it's not empty)
         setValidAddress(address.trim() !== '');
-        // console.log(validAddress)
     }, [address]);
 
     useEffect(() => {
         // Check if at least one domain knowledge is selected
         setValidDomainKnowledge(domainKnowledge.length > 0);
-        // console.log(validDomainKnowledge)
     }, [domainKnowledge]);
 
 
@@ -61,19 +73,16 @@ const AddTask = () => {
     useEffect(() => {
         // Check if the endTime is a valid time (you can use a regular expression or a time library)
         setValidEndTime(new Date(endTime) instanceof Date && !isNaN(new Date(endTime)));
-        // console.log(validEndTime)
     }, [endTime]);
 
     useEffect(() => {
         // Check if the endTime is a valid time (you can use a regular expression or a time library)
         setValidStartTime(new Date(startTime) instanceof Date && !isNaN(new Date(startTime)));
-        // console.log(validEndTime)
     }, [startTime]);
 
     useEffect(() => {
         // Check if the price is a valid number
         setValidPrice(!isNaN(price) && parseFloat(price) >= 0); // Ensure it's a non-negative number
-        console.log(validPrice)
     }, [price]);
 
     const handleTitleChange = (e) => {
@@ -86,6 +95,51 @@ const AddTask = () => {
 
     const handleAddressChange = (e) => {
         setAddress(e.target.value);
+        if (isLoaded) {
+            // Geocode the new address to get its coordinates
+            const geocoder = new window.google.maps.Geocoder();
+            geocoder.geocode({ address: address }, (results, status) => {
+                if (status === 'OK' && results.length > 0) {
+                    current = results[0].geometry.location;
+
+                    // Update the map's center and set the zoom to 15
+                    if (map) {
+                        map.panTo(current);
+                        map.setZoom(15);
+                    }
+                }
+            });
+        }
+
+    };
+
+    const handleFileChange = (e) => {
+        const files = e.target.files;
+        console.log(files)
+        const filePromises = Array.from(files).map((file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    resolve(event.target.result);
+                };
+                reader.onerror = (error) => {
+                    reject(error);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        Promise.all(filePromises)
+            .then((dataUrls) => {
+                setMedia(dataUrls);
+                console.log(dataUrls)
+            })
+            .catch((error) => {
+                console.error('Error converting files to Data URLs:', error);
+            });
+
+        setSelectedFiles(files);
+
     };
 
     const handleDomainKnowledgeChange = (e) => {
@@ -98,7 +152,6 @@ const AddTask = () => {
     };
 
     const handleFrequencyChange = (e) => {
-        console.log(e.target.value)
         setFrequency(e.target.value);
     };
 
@@ -130,7 +183,6 @@ const AddTask = () => {
     }, [isSuccess, navigate]);
 
     const canSave = [validTitle, validDescription, validAddress, validDomainKnowledge, validEndTime, validPrice, validStartTime].every(Boolean) && !isLoading
-    console.log(canSave)
     const onSubmitUserClicked = async (e) => {
         e.preventDefault()
         const frequency = e.target.frequency.value
@@ -144,6 +196,7 @@ const AddTask = () => {
                 description,
                 address,
                 domainKnowledge,
+                media,
                 frequency,
                 time,
                 price,
@@ -205,11 +258,12 @@ const AddTask = () => {
                                     <div className="col-md-12">
                                         <input
                                             type="file"
-                                            accept=".pdf,.png,.jpg,.jpeg,.svg"
-                                            id="myFile"
+                                            accept="image/*"
+                                            id="files"
                                             name="filename"
                                             multiple
                                             className="btn theme-btn-3 mb-10"
+                                            onChange={handleFileChange}
                                         />
                                         <p>
                                             <small>* Multiple uploads is allowed.</small><br />
@@ -224,25 +278,39 @@ const AddTask = () => {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div className="input-item input-item-location-pin ltn__custom-icon ">
-                                            <input
+                                            {isLoaded ? <Autocomplete><input
                                                 className={`form__input ${validAddressClass}`}
                                                 onChange={handleAddressChange}
                                                 type="text"
                                                 name="address"
                                                 placeholder="*Address"
-                                                autoComplete='off' />
+                                            /></Autocomplete> : <input
+                                                className={`form__input ${validAddressClass}`}
+                                                onChange={handleAddressChange}
+                                                type="text"
+                                                name="address"
+                                                placeholder="*Address"
+                                            />}
+
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
                                         <div className="property-details-google-map mb-60">
-                                            <iframe
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3394.009971588668!2d151.2302688151586!3d-33.91752522964282!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b12c9a18df8d1cd%3A0x903482239b8c46c5!2sUniversity%20of%20New%20South%20Wales!5e0!3m2!1sen!2sau!4v1672745266941!5m2!1sen!2sau"
-                                                width="100%"
-                                                height="100%"
-                                                allowFullScreen
-                                                aria-hidden="false"
-                                                tabIndex={0}
-                                            />
+                                            {isLoaded ? <GoogleMap
+                                                center={current}
+                                                zoom={15}
+                                                mapContainerStyle={{ width: '100%', height: '100%' }}
+                                                options={{
+                                                    zoomControl: false,
+                                                    streetViewControl: false,
+                                                    mapTypeControl: false,
+                                                    fullscreenControl: false,
+                                                }}
+                                                onLoad={map => setMap(map)}
+                                            >
+                                                <Marker position={current} />
+                                            </GoogleMap> : <div>Map is loading</div>}
+
                                         </div>
                                     </div>
                                 </div>
@@ -344,7 +412,7 @@ const AddTask = () => {
                                         <h2>6. Task Frequency</h2>
                                         <h6>Select the Task Frequency</h6>
                                         <div className="input-item">
-                                            <select className='nice-select' value={frequency} onChange={handleFrequencyChange}
+                                            <select className='nice-select' onChange={handleFrequencyChange}
                                                 name='frequency' defaultValue="Daily">
                                                 <option value="None" disabled>Select One</option>
                                                 <option value="Daily" >Daily</option>
