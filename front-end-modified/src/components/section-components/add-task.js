@@ -20,7 +20,7 @@ const AddTask = () => {
     const [media, setMedia] = useState(null);
     const [address, setAddress] = useState('');
     const [domainKnowledge, setDomainKnowledge] = useState([]);
-    const [frequency, setFrequency] = useState('None');
+    const [frequency, setFrequency] = useState('Daily');
     const [endTime, setEndTime] = useState('');
     const [startTime, setStartTime] = useState(today);
     const [price, setPrice] = useState('');
@@ -114,25 +114,41 @@ const AddTask = () => {
         setPrice(e.target.value);
     };
 
+    useEffect(() => {
+        if (isSuccess) {
+            setTitle("");
+            setDescription("");
+            setAddress("")
+            setDomainKnowledge([]);
+            setStartTime("")
+            setEndTime("")
+            setMedia(null)
+            setPrice("")
+            setFrequency("None");
+            navigate("/");
+        }
+    }, [isSuccess, navigate]);
+
     const canSave = [validTitle, validDescription, validAddress, validDomainKnowledge, validEndTime, validPrice, validStartTime].every(Boolean) && !isLoading
     console.log(canSave)
     const onSubmitUserClicked = async (e) => {
         e.preventDefault()
-        console.log(frequency)
-        // if (canSave) {
-        const time = {
-            start: startTime,
-            end: endTime
+        const frequency = e.target.frequency.value
+        if (canSave) {
+            const time = {
+                start: startTime,
+                end: endTime
+            }
+            await addNewTask({
+                title,
+                description,
+                address,
+                domainKnowledge,
+                frequency,
+                time,
+                price,
+            });
         }
-        // console.log('Form Data:', {
-        //     title,
-        //     description,
-        //     address,
-        //     domainKnowledge,
-        //     time,
-        //     price,
-        // });
-        // }
     }
 
     const errClass = isError ? "errmsg" : "offscreen"
@@ -307,64 +323,36 @@ const AddTask = () => {
 
                                 {/* Section 6: EndTime */}
                                 <div className="row">
-                                    <div className=" row col-lg-12">
-                                        <h2>5. Time</h2>
-                                        <div className="col-lg-6">
-                                            <h6>Set the start time for the Task</h6>
-                                            <div className="input-item input-item-date ltn__custom-icon">
-                                                <input className={`form__input ${validStartTimeClass}`} onChange={handleStartTimeChange} type="datetime-local" name="startTime" placeholder="startTime" min={today} defaultValue={today} />
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-6">
-                                            <h6>Set the EndTime for the Task</h6>
-                                            <div className="input-item input-item-date ltn__custom-icon">
-                                                <input className={`form__input ${validEndTimeClass}`} onChange={handleEndTimeChange} type="datetime-local" name="endTime" placeholder="EndTime" min={startTime} />
-                                            </div>
+                                    <h2>5. Time</h2>
+                                    <div className="col-lg-6">
+                                        <h6>Set the start time for the Task</h6>
+                                        <div className="input-item input-item-date ltn__custom-icon">
+                                            <input className={`form__input ${validStartTimeClass}`} onChange={handleStartTimeChange} type="datetime-local" name="startTime" placeholder="startTime" min={today} defaultValue={today} />
                                         </div>
                                     </div>
-
+                                    <div className="col-lg-6">
+                                        <h6>Set the EndTime for the Task</h6>
+                                        <div className="input-item input-item-date ltn__custom-icon">
+                                            <input className={`form__input ${validEndTimeClass}`} onChange={handleEndTimeChange} type="datetime-local" name="endTime" placeholder="EndTime" min={startTime} />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Section 6: Task Frequency */}
                                 <div className="row">
                                     <div className="col-lg-6">
-                                        <h2>5. Task Frequency</h2>
+                                        <h2>6. Task Frequency</h2>
                                         <h6>Select the Task Frequency</h6>
-                                        <div className="col-lg-4 col-md-6">
-                                            <label>
-                                                <input
-                                                    type="radio"
-                                                    name="frequency"
-                                                    value="None"
-                                                    checked={frequency === 'None'}
-                                                    onChange={handleFrequencyChange}
-                                                />
-                                                None
-                                            </label>
-                                        </div>
-                                        <div className="col-lg-4 col-md-6">
-                                            <label>
-                                                <input
-                                                    type="radio"
-                                                    name="frequency"
-                                                    value="Daily"
-                                                    checked={frequency === 'Daily'}
-                                                    onChange={handleFrequencyChange}
-                                                />
-                                                Daily
-                                            </label>
-                                        </div>
-                                        <div className="col-lg-4 col-md-6">
-                                            <label>
-                                                <input
-                                                    type="radio"
-                                                    name="frequency"
-                                                    value="Weekly"
-                                                    checked={frequency === 'Weekly'}
-                                                    onChange={handleFrequencyChange}
-                                                />
-                                                Weekly
-                                            </label>
+                                        <div className="input-item">
+                                            <select className='nice-select' value={frequency} onChange={handleFrequencyChange}
+                                                name='frequency' defaultValue="Daily">
+                                                <option value="None" disabled>Select One</option>
+                                                <option value="Daily" >Daily</option>
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                                <option value="Yearly">Yearly</option>
+                                                {/* Add more options as needed */}
+                                            </select>
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
@@ -379,8 +367,7 @@ const AddTask = () => {
                                 {/* Submit Button */}
                                 <div className="btn-wrapper text-center mt-30">
                                     <button
-                                        // disabled={!canSave}
-                                        // onClick={onSubmitUserClicked}
+                                        disabled={!canSave}
                                         className="btn theme-btn-1 btn-effect-1 text-uppercase"
                                         type="submit"
                                     >
