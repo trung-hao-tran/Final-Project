@@ -58,6 +58,11 @@ const taskSchema = new Schema({
     type: [String],
     default: []
   },
+  status: {
+    type: String,
+    enum: ['Not Started', 'In Progress', 'Completed'],
+    default: 'Not Started'
+  },
   milestones:[
     {
       description: String,
