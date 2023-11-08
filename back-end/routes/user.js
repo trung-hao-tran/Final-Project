@@ -28,7 +28,7 @@ router.put("/profile", requireAuth, updateUserProfile);
 
 // admin routes
 // Get all users
-router.get("/admin/users", checkAdmin, getAllUsers);
+router.get("/", getAllUsers);
 // Update users
 router.put("/admin/user/:userId", checkAdmin, updateUser);
 // Delete users

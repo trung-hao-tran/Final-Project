@@ -118,7 +118,7 @@ const MyAccount = () => {
                                         <i className="icon-placeholder" />
                                       </div>
                                       <div className="footer-address-info">
-                                        <p>{userData?.location}</p>
+                                        <p>{userData?.address}</p>
                                       </div>
                                     </li>
                                     <li>

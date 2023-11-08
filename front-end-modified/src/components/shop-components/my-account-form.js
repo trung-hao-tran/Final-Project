@@ -3,11 +3,11 @@ import React, { useState } from "react";
 
 const MyAccountForm = ({ user }) => {
   console.log("userdata in form", user);
-  const { name, email, location, phone } = user;
+  const { name, email, address, phone } = user;
 
   const [nameData, setNameData] = useState(name);
   const [phoneData, setPhoneData] = useState(phone);
-  const [locationData, setLocationData] = useState(location);
+  const [locationData, setLocationData] = useState(address);
   const [emailData, setEmailData] = useState(email);
 
   const handleChangeName = (e) => {

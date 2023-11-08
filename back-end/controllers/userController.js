@@ -112,8 +112,8 @@ const getUser = async (req, res) => {
       res.send({
         name: user.name,
         email: user.email,
-        location: "test address",
-        phone: "1234567",
+        address: user.address,
+        phone: user.phone,
       });
     })
     .catch((err) => res.status(400).send(err.message));
