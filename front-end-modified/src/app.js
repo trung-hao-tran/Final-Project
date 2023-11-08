@@ -33,7 +33,7 @@ const App = () => {
         localStorage.clear();
         console.log("clear");
         dispatch(setAuthenticated(false));
-
+        setLoading(false)
         return;
       }
       if (token) {
