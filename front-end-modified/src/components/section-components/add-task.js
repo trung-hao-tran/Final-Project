@@ -507,7 +507,7 @@ const AddTask = () => {
                     </div>
                   </div>
                   <div className="col-lg-6">
-                    <h6>Set the EndTime for the Task</h6>
+                    <h6>Set the end time for the Task</h6>
                     <div className="input-item input-item-date ltn__custom-icon">
                       <input
                         className={`form__input ${validEndTimeClass}`}

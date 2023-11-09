@@ -77,25 +77,25 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<HomeV1 />} index />
-      <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
-      <Route path="/task/:id" element={<TaskDetailsPage />} />
-      {isAuthenticated ? (
-        <>
-          <Route element={<Prefetch />}>
+      <Route element={<Prefetch />}>
+        <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
+        <Route path="/" element={<HomeV1 />} index />
+        <Route path="/task/:id" element={<TaskDetailsPage />} />
+        {isAuthenticated ? (
+          <>
             <Route path="/add-task" element={<AddTask />} />
             <Route path="/profile" element={<MyAccount />} />
-          </Route>
-        </>
-      ) : (
-        <>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          {/* Redirect users trying to access protected routes to the login page */}
-          <Route path="/add-task" element={<Navigate to="/login" />} />
-          <Route path="/profile" element={<Navigate to="/login" />} />
-        </>
-      )}
+          </>
+        ) : (
+          <>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            {/* Redirect users trying to access protected routes to the login page */}
+            <Route path="/add-task" element={<Navigate to="/login" />} />
+            <Route path="/profile" element={<Navigate to="/login" />} />
+          </>
+        )}
+      </Route>
     </Routes>
   );
 };
