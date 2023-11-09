@@ -10,6 +10,7 @@ import ShopLeftSidebar from "./components/shop-left-sidebar";
 import MyAccount from "./components/my-account";
 import Login from "./components/login";
 import Register from "./components/register";
+import TaskDetailsPage from "./components/task_details";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -33,7 +34,7 @@ const App = () => {
         localStorage.clear();
         console.log("clear");
         dispatch(setAuthenticated(false));
-        setLoading(false)
+        setLoading(false);
         return;
       }
       if (token) {
@@ -78,6 +79,7 @@ const App = () => {
     <Routes>
       <Route path="/" element={<HomeV1 />} index />
       <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
+      <Route path="/task/:id" element={<TaskDetailsPage />} />
       {isAuthenticated ? (
         <>
           <Route element={<Prefetch />}>

@@ -152,7 +152,7 @@ class ShopGridV1 extends Component {
                                   </ul>
                                 </div>
                                 <h2 className="product-title go-top">
-                                  <Link to={`/task-details/${task._id}`}>
+                                  <Link to={`/task/${task._id}`}>
                                     {task.title}
                                   </Link>
                                 </h2>
