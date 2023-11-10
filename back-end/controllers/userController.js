@@ -126,6 +126,72 @@ function getAllUsersWithoutPassword(req, res) {
     .catch((err) => res.status(400).send(err.message));
 }
 
+// Post a comment on a user
+const addComment = async (req, res) => {
+  const senderId = req.user._id
+  const {userId, taskId, rating, comment, time} = req.body
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(404).json({ error: 'No such user!' })
+  }
+  const user = await User.findById(userId)
+  if (!user) {
+    return res.status(404).json({ error: 'No such user!' })
+  }
+  user.comments.push({
+    userId: senderId,
+    taskId,
+    rating,
+    comment,
+    time,
+  });
+
+  // Save the updated user with the new comment
+  const updatedUser = await user.save();
+
+  return res.status(200).json(updatedUser);
+}
+
+// Post a report on a user
+const addReport = async (req, res) => {
+  const senderId = req.user._id
+  const {description, violation, userId} = req.body
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(404).json({ error: 'No such user!' })
+  }
+  const user = await User.findById(userId)
+  if (!user) {
+    return res.status(404).json({ error: 'No such user!' })
+  }
+  user.report.push({
+    description,
+    violation,
+    userId: senderId
+  });
+
+  // Save the updated user with the new comment
+  const updatedUser = await user.save();
+
+  return res.status(200).json(updatedUser);
+}
+
+const payment = async (req, res) => {
+  const userId = req.user._id
+  const {to_pay} = req.body
+  const user = await User.findById(userId)
+  const credit = user.credit
+  if (credit < to_pay) {
+    return res.status(400).json({ error: 'Insufficient credit for payment' });
+  }
+  // Update the user's credit
+  const updatedUser = await User.updateOne(
+    { _id: userId },
+    { $set: { credit: currentCredit - to_pay } }
+  );
+  return res.status(200).json(updatedUser);
+}
+
 module.exports = {
   signupUser,
   loginUser,
@@ -136,4 +202,7 @@ module.exports = {
   refresh,
   getUser,
   getAllUsersWithoutPassword,
+  addComment,
+  addReport,
+  payment,
 };

@@ -31,6 +31,33 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  credit: {
+    type: Number,
+    default: 0,
+  },
+  image: {
+    type: String,
+    default: "",
+  },
+  report: [
+    {
+      description: String,
+      violation: {
+        type: String,
+        enum: ["inappropriate action", "sensitive content"],
+      },
+      userId: String,
+    }
+  ],
+  comments: [
+      {
+      userId: String,
+      taskId: String,
+      rating: Number,
+      comment: String,
+      time: Date,
+      }
+    ]
 })
 
 // static signup method

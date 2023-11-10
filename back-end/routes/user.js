@@ -13,6 +13,9 @@ const {
   refresh,
   getUser,
   getAllUsersWithoutPassword,
+  addComment,
+  addReport,
+  payment,
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -29,7 +32,7 @@ router.put("/profile", requireAuth, updateUserProfile);
 // admin routes
 // Get all users
 router.get("/", getAllUsers);
-// Update users
+// Update a user
 router.put("/admin/user/:userId", checkAdmin, updateUser);
 // Delete users
 router.delete("/admin/user/:userId", checkAdmin, deleteUser);
@@ -40,5 +43,14 @@ router.post("/refresh", refresh);
 router.get("/getuser", getUser);
 // Get all user (helper function for front-end usage)
 router.get("/getusers/getAllUsers", getAllUsersWithoutPassword);
+
+// Post a comment on a user
+router.post("/comment", requireAuth, addComment);
+
+// Post a report on a user
+router.post("/comment", requireAuth, addReport);
+
+// Payment'
+router.post("/payment", requireAuth, payment);
 
 module.exports = router;
