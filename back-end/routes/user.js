@@ -48,7 +48,7 @@ router.get("/getusers/getAllUsers", getAllUsersWithoutPassword);
 router.post("/comment", requireAuth, addComment);
 
 // Post a report on a user
-router.post("/comment", requireAuth, addReport);
+router.post("/report", requireAuth, addReport);
 
 // Payment'
 router.post("/payment", requireAuth, payment);
