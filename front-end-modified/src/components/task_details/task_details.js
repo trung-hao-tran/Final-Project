@@ -11,12 +11,23 @@ import {
   Autocomplete,
 } from "@react-google-maps/api";
 
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 function TaskDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [task, setTaskDetails] = useState({});
   const [loadingTask, setLoadingTask] = useState(false);
   const [user, setUser] = useState({}); //store user info
-  const stateSelector = useSelector((state) => state);
+
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const token = useSelector((state) => state.auth.token);
+  const userId = useSelector((state) => state.auth.userId);
+  console.log("isAuthenticated", isAuthenticated);
+  console.log("token", token);
+  console.log("userId", userId);
   const begin = { lat: -33.9175, lng: 151.2303 };
   const libraries = ["places"];
   const [map, setMap] = useState(/** @type google.maps.Map */ (null));
@@ -24,7 +35,102 @@ function TaskDetails() {
     googleMapsApiKey: "AIzaSyAlmLd3YzM-XIYXoShEWcvTy6OhyJaDzb8",
     libraries: libraries,
   });
+  const [bid, setBid] = useState("");
+  const [description, setDescription] = useState("");
+  const [loadingBid, setLoadingBid] = useState(false);
+
+  const handleChangeBid = (e) => {
+    const value = e.target.value;
+    // Allow only numeric input
+    if (/^\d*$/.test(value) && value.length < 10) {
+      setBid(value);
+    }
+  };
+
+  const handleChangeDescription = (e) => {
+    const value = e.target.value;
+    if (value.length < 250) {
+      setDescription(value);
+    }
+  };
+
+  const handleSubmitBid = async () => {
+    const value = {
+      bid: bid,
+      description: description,
+      user_id: userId,
+      task_id: id,
+    };
+
+    try {
+      setLoadingBid(true);
+      const response = await fetch("http://localhost:4000/api/bid", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(value),
+      });
+      console.log("response", response);
+      if (response.ok) {
+        toast.success(
+          "Submitted Bid Successfully! Task Owner will be notified and contact you soon!"
+        );
+        setLoadingBid(false);
+      } else {
+        toast.error("Request Error");
+        setLoadingBid(false);
+      }
+    } catch (error) {
+      toast.error(`Error: ${error}`);
+      setLoadingBid(false);
+    }
+
+    console.log("submitted value", value);
+  };
+
   const [currentPlace, setCurrentPlace] = useState(begin);
+
+  function SampleNextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", color: "#ff5a3c !important" }} // Customize your arrow style here
+        onClick={onClick}
+      />
+    );
+  }
+
+  function SamplePrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", color: "#ff5a3c" }} // Customize your arrow style here
+        onClick={onClick}
+      />
+    );
+  }
+  const settings = {
+    dots: false, // Show dot indicators
+    infinite: true, // Infinite looping
+    speed: 500, // Transition speed
+    slidesToShow: 1, // Number of slides to show at a time
+    slidesToScroll: 1, // Number of slides to scroll at a time
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+  };
+
+  const handleNavigateLogin = () => {
+    console.log("triggered");
+    const currentUrl = window.location.pathname;
+    localStorage.setItem("tempUrl", currentUrl);
+
+    navigate("/login");
+  };
 
   // setTaskDetails(data);
   useEffect(() => {
@@ -175,17 +281,20 @@ function TaskDetails() {
                   </div>
                   <h4 className="title-2"> Image Description</h4>
                   <div className="ltn__property-details-gallery mb-30">
-                    <div className="row">
-                      <div className="col-md-6">
-                        {task?.images?.map((imageByte, index) => (
+                    <Slider {...settings}>
+                      {task?.images?.map((imageByte, index) => (
+                        <div className="col-md-12">
                           <img
                             key={index}
+                            width={650}
+                            height={650}
                             className="mb-30"
                             src={imageByte}
                             alt="Image"
                           />
-                        ))}
-                        {/* <a
+                        </div>
+                      ))}
+                      {/* <a
                           href={publicUrl + "assets/img/others/14.jpg"}
                           data-rel="lightcase:myCollection"
                         >
@@ -195,8 +304,7 @@ function TaskDetails() {
                             alt="Image"
                           />
                         </a> */}
-                      </div>
-                    </div>
+                    </Slider>
                   </div>
 
                   <h4 className="title-2">Location</h4>
@@ -819,7 +927,7 @@ function TaskDetails() {
                       </div>
                     </div>
                   </div>
-                  {/* Search Widget */}
+                  {/* Search Widget
                   <div className="widget ltn__search-widget">
                     <h4 className="ltn__widget-title ltn__widget-title-border-2">
                       Search Objects
@@ -834,32 +942,62 @@ function TaskDetails() {
                         <i className="fas fa-search" />
                       </button>
                     </form>
-                  </div>
+                  </div> */}
                   {/* Form Widget */}
                   <div className="widget ltn__form-widget">
                     <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                      Drop Messege For Bidding Task
+                      Bid your task
                     </h4>
-                    <form action="#">
-                      <input
-                        type="text"
-                        name="yourname"
-                        placeholder="Your Name*"
-                      />
-                      <input
-                        type="text"
-                        name="youremail"
-                        placeholder="Your e-Mail*"
-                      />
-                      <textarea
-                        name="yourmessage"
-                        placeholder="Write Message..."
-                        defaultValue={""}
-                      />
-                      <button type="submit" className="btn theme-btn-1">
-                        Send Messege
-                      </button>
-                    </form>
+
+                    {isAuthenticated ? (
+                      <>
+                        <input
+                          type="text"
+                          name="bid"
+                          inputMode="numeric"
+                          placeholder="Bid your price (in AUD)*"
+                          value={bid}
+                          onChange={handleChangeBid}
+                        />
+
+                        <textarea
+                          name="yourmessage"
+                          placeholder="Write description..."
+                          value={description}
+                          onChange={handleChangeDescription}
+                        />
+
+                        <button
+                          onClick={handleSubmitBid}
+                          className="btn theme-btn-1"
+                          disabled={
+                            loadingBid ||
+                            bid.length < 1 ||
+                            description.length < 1
+                          }
+                        >
+                          Send Bid
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p>You are not currently logged in</p>
+                        <p>
+                          Please
+                          <button
+                            style={{
+                              background: "transparent",
+                            }}
+                            onClick={handleNavigateLogin}
+                          >
+                            <Link>
+                              <strong> log in</strong>
+                            </Link>{" "}
+                          </button>
+                          to bid for task!
+                        </p>
+                      </>
+                    )}
                   </div>
                 </aside>
               </div>

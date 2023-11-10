@@ -46,7 +46,14 @@ const Login = () => {
     if (isSuccess) {
       setEmail("");
       setPassword("");
-      navigate("/");
+
+      const tempUrl = localStorage.getItem("tempUrl");
+      if (!tempUrl) {
+        navigate("/");
+      } else {
+        localStorage.removeItem("tempUrl");
+        navigate(tempUrl);
+      }
     }
   }, [isSuccess, navigate]);
 
