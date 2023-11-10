@@ -65,7 +65,14 @@ const taskSchema = new Schema({
   },
   milestones:[
     {
-      description: String,
+      title: {
+        type: String,
+        require: true
+      },
+      description: {
+        type: String,
+        require: true 
+      },
       date: {
         type: Date,
         default: Date.now

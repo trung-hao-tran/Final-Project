@@ -181,7 +181,7 @@ const getTaskers = async (req, res) => {
 
   taskers = []
   for (const bid of bids) {
-    tasker = User.findById(bid.user_id)
+    taskers = User.findById(bid.user_id)
     taskers.push(taskers)
   }
 
@@ -286,19 +286,22 @@ const filterTasks = async (req, res) => {
 
 const addMilestoneToTask = async (req, res) => {
   const { id } = req.params; // Task id
-  const { description, priority, status = 'Not Started' } = req.body; // Get title, description, and priority from request
+
+  if (!req.body) {
+    return res.status(400).json({ error: 'No data for milestones' });
+  }
 
   try {
+    const milestones = JSON.parse(req.body);
+
+    if (!Array.isArray(milestones)) {
+      return res.status(400).json({ error: 'Invalid data for milestones' });
+    }
+
     const updatedTask = await Task.findOneAndUpdate(
       { _id: id },
       {
-        $push: {
-          milestones: {
-            description,
-            priority,
-            status
-          }
-        }
+        milestones,
       },
       { new: true }
     );
@@ -307,17 +310,13 @@ const addMilestoneToTask = async (req, res) => {
       return res.status(404).json({ error: 'Task does not exist' });
     }
 
-    // Sort milestones by priority
-    updatedTask.milestones.sort((a, b) => {
-      const priorityOrder = ['High', 'Medium', 'Low'];
-      return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
-    });
-
     res.status(200).json({ status: 'success', data: updatedTask });
   } catch (error) {
     res.status(400).json({ status: 'fail', message: error.message });
   }
-}
+};
+
+
 
 
 const updateMilestoneStatus = async (req, res) => {

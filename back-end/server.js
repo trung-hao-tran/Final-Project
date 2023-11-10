@@ -6,13 +6,17 @@ const taskRoutes = require('./routes/tasks')
 const userRoutes = require('./routes/user')
 const bid = require('./routes/bid')
 const cors = require('cors')
-
+const bodyParser = require('body-parser');
 //express app
 const app =express()
 
 // middleware
-app.use(express.json())
 app.use(cors())
+// extend limit
+app.use(express.json({limit: '100mb', extended: true}));
+app.use(express.urlencoded({limit: '100mb', extended: true}));
+app.use(express.text({ limit: '200mb', extended: true }));
+app.use(express.json())
 
 app.use((req, res, next) => {
     console.log(req.path, req.method)
