@@ -57,7 +57,7 @@ const Navbar = () => {
                     <div className="ltn__main-menu go-top">
                       <ul>
                         <li>
-                          <Link to="/shop-left-sidebar">Tasks</Link>
+                          <Link to="/tasks">Tasks</Link>
                         </li>
                         <li>
                           <Link to="/about">About</Link>

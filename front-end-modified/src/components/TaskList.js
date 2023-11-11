@@ -1,18 +1,18 @@
 import React from 'react';
 import Navbar from './global-components/navbar';
 import PageHeader from './global-components/page-header';
-import ShopLeftSidebar from './shop-components/shop-left-sidebar';
+import TaskList from './shop-components/TaskList';
 import Footer from './global-components/footer';
 
-const ShopLeftSidebarPage = () => {
+const TaskListPage = () => {
     return <div>
         <Navbar />
         <PageHeader headertitle="Tasks overthrough" />
-        <ShopLeftSidebar />
+        <TaskList />
 
         <Footer />
     </div>
 }
 
-export default ShopLeftSidebarPage
+export default TaskListPage
 

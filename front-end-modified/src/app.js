@@ -5,7 +5,7 @@ import HomeV1 from "./components/home-v1";
 
 import Prefetch from "./feature/auth/prefetch";
 
-import ShopLeftSidebar from "./components/shop-left-sidebar";
+import TaskListPage from "./components/TaskList";
 
 import MyAccount from "./components/my-account";
 import Login from "./components/login";
@@ -78,9 +78,9 @@ const App = () => {
   return (
     <Routes>
       <Route element={<Prefetch />}>
-        <Route path="/shop-left-sidebar" element={<ShopLeftSidebar />} />
+        <Route path="/tasks" element={<TaskListPage />} />
         <Route path="/" element={<HomeV1 />} index />
-        <Route path="/task/:id" element={<TaskDetailsPage />} />
+        <Route path="/tasks/:id" element={<TaskDetailsPage />} />
         {isAuthenticated ? (
           <>
             <Route path="/add-task" element={<AddTask />} />
