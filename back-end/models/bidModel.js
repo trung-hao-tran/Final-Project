@@ -8,10 +8,6 @@ const bidSchema = new Schema(
       type: String,
       required: true,
     },
-    bid: {
-      type: String,
-      required: true,
-    },
     user_id: {
       type: String,
       required: true,

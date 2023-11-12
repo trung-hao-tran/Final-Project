@@ -1,6 +1,20 @@
 const Task = require('../models/taskModel')
 const Bid = require('../models/bidModel')
 
+const getBid = async (req, res) => {
+    const {id, sort} = req.params
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: 'No such task' })
+      }
+      const bids = await Bid.find({ task_id: id }).sort(sort)
+    
+      if (!bids) {
+        return res.status(404).json({ error: 'No bid yet!' })
+      }
+      res.status(200).json(bids)
+
+}
+
 
 exports.createBid = async (req, res) => {
     try {
@@ -13,7 +27,6 @@ exports.createBid = async (req, res) => {
         // Create a new bid
         const newBid = await Bid.create({
             description: req.body.description,
-            bid: req.body.bid,
             user_id: req.user.id,  // get the user id
             task_id: req.body.task_id
         });
@@ -31,3 +44,7 @@ exports.createBid = async (req, res) => {
         });
     }
 };
+
+module.exports = {
+    getBid
+}
