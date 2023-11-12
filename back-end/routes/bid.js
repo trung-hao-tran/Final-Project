@@ -1,7 +1,7 @@
 const express = require("express");
 const requireAuth = require("../middleware/requireAuth");
 
-const {getBid} = require("../controllers/bidController")
+const { getBid } = require("../controllers/bidController");
 
 // controller functions
 const { createBid } = require("../controllers/bidController");

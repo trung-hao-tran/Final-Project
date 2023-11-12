@@ -14,6 +14,17 @@ import {
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Modal from "react-modal";
+const customStylesModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
 
 function TaskDetails() {
   const { id } = useParams();
@@ -38,6 +49,15 @@ function TaskDetails() {
   const [bid, setBid] = useState("");
   const [description, setDescription] = useState("");
   const [loadingBid, setLoadingBid] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   const handleChangeBid = (e) => {
     const value = e.target.value;
@@ -347,6 +367,10 @@ function TaskDetails() {
                     </ul>
                   </div>
                   <h4 className="title-2">Task Milestone</h4>
+                  <div style={{ textAlign: "right", marginBottom: 50 }}>
+                    <button>Add Milestone</button>
+                  </div>
+
                   {/* APARTMENTS PLAN AREA START */}
                   <div className="ltn__apartments-plan-area product-details-apartments-plan mb-60">
                     <div className="ltn__tab-menu ltn__tab-menu-3 ltn__tab-menu-top-right-- text-uppercase--- text-center---">
