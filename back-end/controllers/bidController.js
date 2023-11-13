@@ -1,5 +1,6 @@
 const Task = require('../models/taskModel')
 const Bid = require('../models/bidModel')
+const mongoose = require('mongoose');
 
 const getBid = async (req, res) => {
     const {id, sort} = req.params
@@ -16,7 +17,7 @@ const getBid = async (req, res) => {
 }
 
 
-exports.createBid = async (req, res) => {
+const createBid = async (req, res) => {
     try {
         // Check if the task exists
         const task = await Task.findById(req.body.task_id);
@@ -46,5 +47,6 @@ exports.createBid = async (req, res) => {
 };
 
 module.exports = {
-    getBid
+    getBid,
+    createBid,
 }
