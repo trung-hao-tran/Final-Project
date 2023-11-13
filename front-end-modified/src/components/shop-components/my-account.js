@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/iframe-has-title */
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -34,7 +34,7 @@ const MyAccount = () => {
 
   const userData = useSelector((state) => state.users.user);
   console.log("userData", userData);
-  let publicUrl = process.env.PUBLIC_URL + "/";
+  let publicUrl = process.env.PUBLIC_URL;
 
   return (
     <div className="liton__wishlist-area pb-70">
@@ -63,10 +63,6 @@ const MyAccount = () => {
                         </a>
                         <a data-bs-toggle="tab" href="#ltn_tab_1_6">
                           Current Task <i className="fa-solid fa-briefcase" />
-                        </a>
-
-                        <a href="">
-                          Logout <i className="fas fa-sign-out-alt" />
                         </a>
                       </div>
                     </div>
@@ -104,7 +100,11 @@ const MyAccount = () => {
                             <div className="ltn-author-introducing clearfix">
                               <div className="author-img">
                                 <img
-                                  src={publicUrl + "assets/img/blog/author.jpg"}
+                                  src={
+                                    userData?.image
+                                      ? userData.image
+                                      : "/assets/img/default/user.png"
+                                  }
                                   alt="Author Image"
                                 />
                               </div>
