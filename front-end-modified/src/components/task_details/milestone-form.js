@@ -11,9 +11,7 @@ const MilestoneForm = (props) => {
   const [priority, setPriority] = useState("Not Started");
   const today = new Date().toISOString().slice(0, 16);
   const endTimeData = endTime?.slice(0, 16);
-  console.log("endTimeData", endTimeData);
-  console.log("taskId", taskId);
-  console.log("mileStoneArray", mileStoneArray);
+
   const handleDateChange = (e) => {
     setDate(e.target.value);
   };
@@ -74,7 +72,6 @@ const MilestoneForm = (props) => {
     };
 
     mileStoneArray.push(value);
-    console.log("value for submit", mileStoneArray);
 
     try {
       setIsLoading(true);
@@ -89,7 +86,7 @@ const MilestoneForm = (props) => {
           body: JSON.stringify(mileStoneArray),
         }
       );
-      console.log("response", response);
+
       if (response.ok) {
         toast.success("Create milestone successfully!");
         setIsLoading(false);

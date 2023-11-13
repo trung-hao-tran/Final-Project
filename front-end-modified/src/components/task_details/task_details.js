@@ -15,6 +15,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Modal from "react-modal";
 import MilestoneForm from "./milestone-form";
+import MileStoneEditForm from "./milestone-edit-form";
 const customStylesModal = {
   content: {
     top: "50%",
@@ -58,7 +59,12 @@ function TaskDetails() {
   const [bid, setBid] = useState("");
   const [description, setDescription] = useState("");
   const [loadingBid, setLoadingBid] = useState(false);
+
   const [openModal, setOpenModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [currentMilestoneIndex, setCurrentMilestoneIndex] = useState(null);
+
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   // set flag for re-fetch API
   const [flag, setFlag] = useState(false);
@@ -69,6 +75,18 @@ function TaskDetails() {
     // references are now sync'd and can be accessed.
     subtitle.style.color = "#f00";
   }
+
+  const handleOpenEditModal = (milestoneData, index) => {
+    document.body.style.overflow = "hidden";
+    setOpenEditModal(true);
+    setCurrentMilestoneIndex(index);
+  };
+
+  const handleCloseEditModal = () => {
+    document.body.style.overflow = "unset";
+    setOpenEditModal(false);
+    setCurrentMilestoneIndex(null);
+  };
 
   const handleOpenModal = () => {
     document.body.style.overflow = "hidden";
@@ -203,7 +221,7 @@ function TaskDetails() {
         toast.error(`Error fetching tasks: ${error}`);
         setLoadingTask(false);
       });
-  }, [id]);
+  }, [id, flag]);
 
   useEffect(() => {
     if (isLoaded && task.address) {
@@ -224,8 +242,51 @@ function TaskDetails() {
   }, [task, isLoaded]);
 
   let publicUrl = process.env.PUBLIC_URL + "/";
-  console.log("tasks", task);
-  console.log("user", user);
+  const handleDeleteMilestone = async (mileStoneId) => {
+    console.log("mileStone index", mileStoneId);
+    console.log("value before delete", task.milestones);
+    const value = task.milestones.splice(mileStoneId, 1);
+
+    try {
+      setLoadingDelete(true);
+      const response = await fetch(
+        `http://localhost:4000/api/tasks/${id}/milestones`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(value),
+        }
+      );
+
+      if (response.ok) {
+        setLoadingDelete(false);
+        if (flag) {
+          setFlag(true);
+        } else {
+          setFlag(false);
+        }
+      } else {
+        if (flag) {
+          setFlag(true);
+        } else {
+          setFlag(false);
+        }
+        toast.error("Request Error");
+        setLoadingDelete(false);
+      }
+    } catch (error) {
+      if (flag) {
+        setFlag(true);
+      } else {
+        setFlag(false);
+      }
+      toast.error(`Error: ${error}`);
+      setLoadingDelete(false);
+    }
+  };
   return (
     <>
       {loadingTask ? (
@@ -410,16 +471,14 @@ function TaskDetails() {
                     <div className="ltn__tab-menu ltn__tab-menu-3 ltn__tab-menu-top-right-- text-uppercase--- text-center---">
                       <div className="nav">
                         {task?.milestones?.map((v, index) => (
-                          <>
-                            <a
-                              key={index}
-                              data-bs-toggle="tab"
-                              className={index + 1 === 1 ? "active show" : null}
-                              href={`#liton_tab_3_${index + 1}`}
-                            >
-                              {`Milestone ${index + 1}`}
-                            </a>
-                          </>
+                          <a
+                            key={index}
+                            data-bs-toggle="tab"
+                            className={index + 1 === 1 ? "active show" : null}
+                            href={`#liton_tab_3_${index + 1}`}
+                          >
+                            {`Milestone ${index + 1}`}
+                          </a>
                         ))}
                       </div>
                     </div>
@@ -450,11 +509,28 @@ function TaskDetails() {
                                       textAlign: "right",
                                     }}
                                   >
-                                    <button style={{ marginRight: 10 }}>
+                                    <button
+                                      onClick={() =>
+                                        handleOpenEditModal(v, index)
+                                      }
+                                      style={{ marginRight: 10 }}
+                                    >
                                       Edit this milestone
                                     </button>
 
-                                    <button> Delete this milestone</button>
+                                    {task.milestones.length < 2 ? (
+                                      <></>
+                                    ) : (
+                                      <button
+                                        disabled={loadingDelete}
+                                        onClick={() =>
+                                          handleDeleteMilestone(index)
+                                        }
+                                      >
+                                        {" "}
+                                        Delete this milestone
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -911,6 +987,26 @@ function TaskDetails() {
           taskId={id}
           toast={toast}
           mileStoneArray={task.milestones}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={openEditModal}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={handleCloseEditModal}
+        style={customStylesModal}
+        ariaHideApp={false}
+      >
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Milestone</h2>
+        <MileStoneEditForm
+          flag={flag}
+          onClose={handleCloseEditModal}
+          setFlag={setFlag}
+          endTime={task?.time?.end}
+          taskId={id}
+          toast={toast}
+          mileStoneArray={task.milestones}
+          index={currentMilestoneIndex}
         />
       </Modal>
     </>

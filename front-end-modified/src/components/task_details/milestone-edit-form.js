@@ -13,16 +13,17 @@ const MileStoneEditForm = (props) => {
     mileStoneData,
   } = props;
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+  const [title, setTitle] = useState(mileStoneArray[index]?.title);
+  const [description, setDescription] = useState(
+    mileStoneArray[index]?.description
+  );
+  const [date, setDate] = useState(mileStoneArray[index]?.date.slice(0, 16));
   const [isLoading, setIsLoading] = useState(false);
-  const [priority, setPriority] = useState("Not Started");
+  const [priority, setPriority] = useState(mileStoneArray[index]?.priority);
   const today = new Date().toISOString().slice(0, 16);
+
   const endTimeData = endTime?.slice(0, 16);
-  console.log("endTimeData", endTimeData);
-  console.log("taskId", taskId);
-  console.log("mileStoneArray", mileStoneArray);
+
   const handleDateChange = (e) => {
     setDate(e.target.value);
   };
@@ -75,15 +76,15 @@ const MileStoneEditForm = (props) => {
 
     const priority = e.target.priority.value;
 
-    const value = {
+    const valueToUpdate = {
       title,
       description,
       priority,
       date,
     };
 
-    mileStoneArray.push(value);
-    console.log("value for submit", mileStoneArray);
+    // update mileStoneArray before push to api call
+    mileStoneArray[index] = valueToUpdate;
 
     try {
       setIsLoading(true);
@@ -98,9 +99,9 @@ const MileStoneEditForm = (props) => {
           body: JSON.stringify(mileStoneArray),
         }
       );
-      console.log("response", response);
+
       if (response.ok) {
-        toast.success("Create milestone successfully!");
+        toast.success("Update milestone successfully!");
         setIsLoading(false);
         if (flag) {
           setFlag(true);
@@ -148,6 +149,7 @@ const MileStoneEditForm = (props) => {
               name="title"
               placeholder="Title*"
               onChange={handleTitleChange}
+              value={title}
               autoComplete="off"
             />
             <textarea
@@ -155,7 +157,7 @@ const MileStoneEditForm = (props) => {
               name="description"
               placeholder="Description*"
               onChange={handleDescriptionChange}
-              defaultValue={""}
+              value={description}
             />
             <div className="input-item input-item-date ltn__custom-icon">
               <input
@@ -164,8 +166,7 @@ const MileStoneEditForm = (props) => {
                 type="datetime-local"
                 name="date"
                 placeholder="date"
-                min={today}
-                defaultValue={today}
+                value={date}
                 max={endTimeData}
               />
             </div>
@@ -173,7 +174,7 @@ const MileStoneEditForm = (props) => {
               <select
                 className="nice-select"
                 name="priority"
-                defaultValue="Not Started"
+                defaultValue={priority}
                 onChange={handleChangePriority}
               >
                 <option value="None" disabled>
