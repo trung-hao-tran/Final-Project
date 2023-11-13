@@ -114,6 +114,7 @@ const getUser = async (req, res) => {
         email: user.email,
         address: user.address,
         phone: user.phone,
+        image: user.image,
       });
     })
     .catch((err) => res.status(400).send(err.message));
@@ -128,15 +129,15 @@ function getAllUsersWithoutPassword(req, res) {
 
 // Post a comment on a user
 const addComment = async (req, res) => {
-  const senderId = req.user._id
-  const {userId, taskId, rating, comment, time} = req.body
+  const senderId = req.user._id;
+  const { userId, taskId, rating, comment, time } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(404).json({ error: 'No such user!' })
+    return res.status(404).json({ error: "No such user!" });
   }
-  const user = await User.findById(userId)
+  const user = await User.findById(userId);
   if (!user) {
-    return res.status(404).json({ error: 'No such user!' })
+    return res.status(404).json({ error: "No such user!" });
   }
   user.comments.push({
     userId: senderId,
@@ -150,39 +151,39 @@ const addComment = async (req, res) => {
   const updatedUser = await user.save();
 
   return res.status(200).json(updatedUser);
-}
+};
 
 // Post a report on a user
 const addReport = async (req, res) => {
-  const senderId = req.user._id
-  const {description, violation, userId} = req.body
+  const senderId = req.user._id;
+  const { description, violation, userId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(404).json({ error: 'No such user!' })
+    return res.status(404).json({ error: "No such user!" });
   }
-  const user = await User.findById(userId)
+  const user = await User.findById(userId);
   if (!user) {
-    return res.status(404).json({ error: 'No such user!' })
+    return res.status(404).json({ error: "No such user!" });
   }
   user.report.push({
     description,
     violation,
-    userId: senderId
+    userId: senderId,
   });
 
   // Save the updated user with the new comment
   const updatedUser = await user.save();
 
   return res.status(200).json(updatedUser);
-}
+};
 
 const payment = async (req, res) => {
-  const userId = req.user._id
-  const {to_pay} = req.body
-  const user = await User.findById(userId)
-  const credit = user.credit
+  const userId = req.user._id;
+  const { to_pay } = req.body;
+  const user = await User.findById(userId);
+  const credit = user.credit;
   if (credit < to_pay) {
-    return res.status(400).json({ error: 'Insufficient credit for payment' });
+    return res.status(400).json({ error: "Insufficient credit for payment" });
   }
   // Update the user's credit
   const updatedUser = await User.updateOne(
@@ -190,7 +191,7 @@ const payment = async (req, res) => {
     { $set: { credit: currentCredit - to_pay } }
   );
   return res.status(200).json(updatedUser);
-}
+};
 
 module.exports = {
   signupUser,

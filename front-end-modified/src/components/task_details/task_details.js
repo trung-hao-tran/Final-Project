@@ -301,7 +301,7 @@ function TaskDetails() {
           >
             <ReactLoading
               type={"bars"}
-              color={"ffff"}
+              color={"#ff5a3c"}
               height={100}
               width={100}
             />

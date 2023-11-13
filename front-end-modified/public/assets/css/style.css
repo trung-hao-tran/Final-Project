@@ -9418,8 +9418,9 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   line-height: 25px;
 }
 
-.product-badge li:first-child {
+.product-badge li {
   margin-top: 0;
+  margin-right: 10px;
 }
 
 .product-badge li::before {
@@ -9827,6 +9828,9 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   background-color: transparent;
   color: var(--ltn__secondary-color);
   padding: 0;
+  border: 1px solid var(--ltn__secondary-color);
+  padding-left: 3px;
+  padding-right:3px;
 }
 
 .ltn__product-item-5 .product-img-location ul {
@@ -9862,6 +9866,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 
 .ltn__product-item-5 .ltn__plot-brief li span {
   font-weight: 700;
+  border: #000;
 }
 
 .ltn__product-item-5 .real-estate-agent {
@@ -9916,6 +9921,20 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+}
+
+.ltn__list-item-2---.ltn__list-item-2-before---.ltn__plot-brief {
+  color: var(--ltn__secondary-color)
+}
+
+.ltn__list-item-2---.ltn__list-item-2-before---.ltn__plot-brief li{
+  border: 1px solid var(--ltn__secondary-color);
+  border-radius: 20px;
+  padding: 5px; 
+}
+.ltn__list-item-2---.ltn__list-item-2-before---.ltn__plot-brief li:hover{
+  background-color:  var(--ltn__secondary-color);
+  color: white;
 }
 
 /* ----------------------------------------------------
@@ -10768,6 +10787,8 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 
 .ltn__product-list-view .ltn__product-item .product-img {
   max-width: 40%;
+  width: 251px;
+  height: 192px;
   float: left;
 }
 

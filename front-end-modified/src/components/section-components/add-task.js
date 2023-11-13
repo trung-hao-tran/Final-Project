@@ -125,10 +125,8 @@ const AddTask = () => {
       //variable to store the result
       const place = searchResult.getPlace();
       //variable to store the name from place details result
-      const name = place.name;
+      const name = place.formatted_address;
       //variable to store the status from place details result
-      console.log("onplacechnage address", name);
-      console.log(isLoaded);
       if (isLoaded) {
         console.log(name);
         // Geocode the new address to get its coordinates

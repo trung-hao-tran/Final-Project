@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const validator = require('validator')
 
 const Schema = mongoose.Schema
@@ -61,7 +61,7 @@ const userSchema = new Schema({
 })
 
 // static signup method
-userSchema.statics.signup = async function(name, email, password, address, phone) {
+userSchema.statics.signup = async function (name, email, password, address, phone) {
 
   // validation
   if (!name || !email || !password || !address || !phone) {
@@ -83,13 +83,13 @@ userSchema.statics.signup = async function(name, email, password, address, phone
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt)
 
-  const user = await this.create({ name, email, password: hash, address, phone})
+  const user = await this.create({ name, email, password: hash, address, phone })
 
   return user
 }
 
 // static login method
-userSchema.statics.login = async function(email, password) {
+userSchema.statics.login = async function (email, password) {
 
   if (!email || !password) {
     throw Error('All fields must be filled')
@@ -109,7 +109,7 @@ userSchema.statics.login = async function(email, password) {
 }
 
 // check if user is admin
-userSchema.methods.isAdmin = function() {
+userSchema.methods.isAdmin = function () {
   return this.role === 'admin'
 }
 

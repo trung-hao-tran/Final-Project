@@ -8,6 +8,7 @@ const Bid = require('../models/bidModel');
 
 //----------------tests for users----------------
 let authorization;
+let userId;
 
 describe("signup a user", () => {
   test("give the personal information", async () => {
@@ -30,7 +31,8 @@ describe("login a user", () => {
       password: "Comp9900test!"
     })
     console.log(res.body)
-    authorization = "Bearer " + res.body.token
+    authorization = "Bearer " + res.body.token;
+    userId = res.body._id;
     expect(res.statusCode).toBe(200)
   })
 })
@@ -48,7 +50,102 @@ describe("update user profile", () => {
   })
 })
 
+//----------------Task test----------------
+let taskId;
 
+describe("create a task", () => {
+  test("provide task details", async () => {
+    const res = await request(app)
+      .post("/api/tasks")
+      .set("authorization", authorization)
+      .send({
+        title: "Test Task",
+        description: "Finish the project on time",
+        time: {
+          "start": "2023-11-01T08:00:00.000Z",
+          "end": "2023-11-02T17:00:00.000Z"
+        },
+        frequency: "Once",
+        price: 100
+      });
+
+    console.log(res.body);
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty("title", "Test Task");
+    taskId = res.body._id; // Save the taskId for later use
+  });
+});
+
+describe("get tasks", () => {
+  test("retrieve all tasks", async () => {
+    const res = await request(app).get("/api/tasks");
+    console.log(res.body);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeInstanceOf(Array);
+  });
+});
+
+//----------------Bid Test----------------
+let bidId;
+
+describe("create a bid", () => {
+  test("provide bid details", async () => {
+    const res = await request(app)
+      .post("/api/bid")
+      .set("authorization", authorization)
+      .set("taskId", taskId)
+      .send({
+        description: "Bid description",
+        task_id: "taskId", // Use the taskId created in the previous test
+      });
+
+    console.log(res.body);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("description", "Bid description");
+    bidId = res.body._id; // Save the bidId for later use
+  });
+});
+
+describe("get bids", () => {
+  test("retrieve all bids", async () => {
+    const res = await request(app).get("/api/bid");
+    console.log(res.body);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeInstanceOf(Array);
+  });
+});
+
+//----------------tests for messages----------------
+let messageId;
+
+describe("send a message", () => {
+  test("provide message details", async () => {
+    const res = await request(app)
+      .post("/api/messages/send")
+      .set("authorization", authorization)
+      .set("userId", userId)
+      .send({
+        receiverId: "userId", // Replace with an actual user ID
+        messageText: "Test message",
+      });
+
+    console.log(res.body);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("messageText", "Test message");
+    messageId = res.body._id; // Save the messageId for later use
+  });
+});
+
+describe("get messages", () => {
+  test("retrieve all messages", async () => {
+    const res = await request(app).get("/api/messages/getMessages");
+    console.log(res.body);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeInstanceOf(Array);
+  });
+});
+
+//------------------------------------------------
 // After all tests have run, perform cleanup
 afterAll(async () => {
   // Use a try-catch block to handle errors during cleanup
@@ -63,7 +160,6 @@ afterAll(async () => {
   }
 });
 //--------------------------------------------------
-
 
 // // Helper function to create a test user in the database
 // const createTestUser = async () => {
