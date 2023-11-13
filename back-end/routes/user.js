@@ -50,7 +50,7 @@ router.post("/comment", requireAuth, addComment);
 // Post a report on a user
 router.post("/report", requireAuth, addReport);
 
-// Payment'
+// Payment
 router.post("/payment", requireAuth, payment);
 
 module.exports = router;
