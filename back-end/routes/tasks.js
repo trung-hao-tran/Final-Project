@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require("express");
 
 const {
   createTask,
@@ -11,46 +11,47 @@ const {
   filterTasks,
   addMilestoneToTask,
   updateMilestoneStatus,
-  getMilestonesForTask
-} = require('../controllers/taskController')
+  getMilestonesForTask,
+} = require("../controllers/taskController");
 
-const requireAuth = require('../middleware/requireAuth')
+const requireAuth = require("../middleware/requireAuth");
 
-const router = express.Router()
+const router = express.Router();
 
 // require auth for all task routes
 // router.use(requireAuth)
 
 // GET all tasks
-router.get('/', getTasks)
+router.get("/", getTasks);
 
 // GET a single task
-router.get('/:id', getTask)
+router.get("/:id", getTask);
 
 // POST a new task
-router.post('/', requireAuth, createTask)
+router.post("/", requireAuth, createTask);
 
 // DELETE a task
-router.delete('/:id', requireAuth, deleteTask)
+router.delete("/:id", requireAuth, deleteTask);
 
 // UPDATE a task
-router.patch('/:id', requireAuth, updateTask)
+router.patch("/:id", requireAuth, updateTask);
 
 // GET all taskers bidding on a given task
-router.get('/taskers/:id', getTaskers)
+router.get("/taskers/:id", getTaskers);
 
 // assign a tasker to complete a task
-router.post('/taskers/:taskId/:taskerId', requireAuth, assignTasker)
+router.post("/taskers/:taskId/:taskerId", requireAuth, assignTasker);
+
 // filter tasks
-router.post('/filter-tasks', filterTasks)
+router.post("/filter-tasks", filterTasks);
 
 // Add milestones to tasks
-router.post('/:id/milestones', addMilestoneToTask);
+router.post("/:id/milestones", addMilestoneToTask);
 
 // Update the Status of a Milestone
-router.put('/:taskId/milestones/:milestoneId', updateMilestoneStatus);
+router.put("/:taskId/milestones/:milestoneId", updateMilestoneStatus);
 
 // Get a List of Milestones for Task
-router.get('/:taskId/milestones', getMilestonesForTask);
+router.get("/:taskId/milestones", getMilestonesForTask);
 
-module.exports = router
+module.exports = router;

@@ -2,7 +2,6 @@ import React, { Component, useState, useEffect } from "react";
 import { Link, useNavigate, useParams, useHistory } from "react-router-dom";
 import Sidebar from "./sidebar";
 import { dispatch, useSelector } from "react-redux";
-import toast, { Toaster } from "react-hot-toast";
 import ReactLoading from "react-loading";
 import {
   useJsApiLoader,
@@ -10,10 +9,31 @@ import {
   Marker,
   Autocomplete,
 } from "@react-google-maps/api";
-
+import toast, { Toaster } from "react-hot-toast";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Modal from "react-modal";
+import MilestoneForm from "./milestone-form";
+const customStylesModal = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "50%",
+    height: "75%",
+    overflowY: "scroll",
+    zIndex: 4,
+  },
+  overlay: {
+    // If you want to style the overlay
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Example for a semi-transparent overlay
+    zIndex: 4, // Should be slightly less than the modal content
+  },
+};
 
 function TaskDetails() {
   const { id } = useParams();
@@ -38,6 +58,34 @@ function TaskDetails() {
   const [bid, setBid] = useState("");
   const [description, setDescription] = useState("");
   const [loadingBid, setLoadingBid] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
+  // set flag for re-fetch API
+  const [flag, setFlag] = useState(false);
+
+  let subtitle;
+  Modal.setAppElement("#quarter");
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "#f00";
+  }
+
+  const handleOpenModal = () => {
+    document.body.style.overflow = "hidden";
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    document.body.style.overflow = "unset";
+    setOpenModal(false);
+  };
+
+  useEffect(() => {
+    // Cleanup function to reset body overflow when the component unmounts
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   const handleChangeBid = (e) => {
     const value = e.target.value;
@@ -87,8 +135,6 @@ function TaskDetails() {
       toast.error(`Error: ${error}`);
       setLoadingBid(false);
     }
-
-    console.log("submitted value", value);
   };
 
   const [currentPlace, setCurrentPlace] = useState(begin);
@@ -236,6 +282,8 @@ function TaskDetails() {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
                           }
                         )}
                       </li>
@@ -283,7 +331,7 @@ function TaskDetails() {
                   <div className="ltn__property-details-gallery mb-30">
                     <Slider {...settings}>
                       {task?.images?.map((imageByte, index) => (
-                        <div className="col-md-12">
+                        <div className="col-md-12" key={index}>
                           <img
                             key={index}
                             width={650}
@@ -346,82 +394,106 @@ function TaskDetails() {
                       </li>
                     </ul>
                   </div>
-                  <h4 className="title-2">Task Milestone</h4>
+                  <div className="row mb-30">
+                    <div className="col-lg-6">
+                      <h4 className="title-2">Task Milestone</h4>
+                    </div>
+                    <div className="col-lg-6">
+                      <div style={{ textAlign: "right", marginTop: 30 }}>
+                        <button onClick={handleOpenModal}>Add Milestone</button>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* APARTMENTS PLAN AREA START */}
                   <div className="ltn__apartments-plan-area product-details-apartments-plan mb-60">
                     <div className="ltn__tab-menu ltn__tab-menu-3 ltn__tab-menu-top-right-- text-uppercase--- text-center---">
                       <div className="nav">
-                        <a data-bs-toggle="tab" href="#liton_tab_3_1">
-                          Milestone 1
-                        </a>
-                        <a
-                          className="active show"
-                          data-bs-toggle="tab"
-                          href="#liton_tab_3_2"
-                        >
-                          Milestone 2
-                        </a>
-                        <a data-bs-toggle="tab" href="#liton_tab_3_3">
-                          Milestone 3
-                        </a>
-                        <a data-bs-toggle="tab" href="#liton_tab_3_4">
-                          Milestone 4
-                        </a>
+                        {task?.milestones?.map((v, index) => (
+                          <>
+                            <a
+                              key={index}
+                              data-bs-toggle="tab"
+                              className={index + 1 === 1 ? "active show" : null}
+                              href={`#liton_tab_3_${index + 1}`}
+                            >
+                              {`Milestone ${index + 1}`}
+                            </a>
+                          </>
+                        ))}
                       </div>
                     </div>
                     <div className="tab-content">
-                      <div className="tab-pane fade" id="liton_tab_3_1">
-                        <div className="ltn__apartments-tab-content-inner">
-                          <div className="row">
-                            <div className="col-lg-7">
-                              <div className="apartments-plan-img">
-                                <img
-                                  src={publicUrl + "assets/img/others/10.png"}
-                                  alt="#"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-5">
-                              <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                                <h2>First Floor</h2>
-                                <p>
-                                  Enimad minim veniam quis nostrud exercitation
-                                  ullamco laboris. Lorem ipsum dolor sit amet
-                                  cons aetetur adipisicing elit sedo eiusmod
-                                  tempor.Incididunt labore et dolore magna
-                                  aliqua. sed ayd minim veniam.
-                                </p>
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="product-details-apartments-info-list  section-bg-1">
-                                <div className="row">
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Total Area</label>{" "}
-                                          <span>2800 Sq. Ft</span>
-                                        </li>
-                                        <li>
-                                          <label>Bedroom</label>{" "}
-                                          <span>150 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
+                      {task?.milestones?.map((v, index) => (
+                        <div
+                          className={
+                            index + 1 === 1
+                              ? `tab-pane fade active show `
+                              : `tab-pane fade`
+                          }
+                          id={`liton_tab_3_${index + 1}`}
+                          key={index}
+                        >
+                          <div className="ltn__apartments-tab-content-inner">
+                            <div className="row">
+                              <div className="row">
+                                <div className="col-lg-6">
+                                  <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
+                                    <h2>{v?.title}</h2>
+                                    <p>{v?.description}</p>
                                   </div>
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Belcony/Pets</label>{" "}
-                                          <span>Allowed</span>
-                                        </li>
-                                        <li>
-                                          <label>Lounge</label>{" "}
-                                          <span>650 Sq. Ft</span>
-                                        </li>
-                                      </ul>
+                                </div>
+                                <div className="col-lg-6">
+                                  <div
+                                    style={{
+                                      marginTop: 35,
+                                      textAlign: "right",
+                                    }}
+                                  >
+                                    <button style={{ marginRight: 10 }}>
+                                      Edit this milestone
+                                    </button>
+
+                                    <button> Delete this milestone</button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="col-lg-12">
+                                <div className="product-details-apartments-info-list  section-bg-1">
+                                  <div className="row">
+                                    <div className="col-lg-12">
+                                      <div className="apartments-info-list apartments-info-list-color mt-40---">
+                                        <ul>
+                                          <li>
+                                            <label>Priority</label>{" "}
+                                            <span>{v?.priority}</span>
+                                          </li>
+                                          <li>
+                                            <label>Status</label>{" "}
+                                            <span>{v?.status}</span>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                    <div className="col-lg-12">
+                                      <div className="apartments-info-list apartments-info-list-color mt-40---">
+                                        <ul>
+                                          <li>
+                                            <label>Due Date and time</label>{" "}
+                                            <span>
+                                              {new Date(
+                                                v?.date
+                                              ).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                              })}
+                                            </span>
+                                          </li>
+                                        </ul>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -429,190 +501,7 @@ function TaskDetails() {
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        className="tab-pane fade active show"
-                        id="liton_tab_3_2"
-                      >
-                        <div className="ltn__product-tab-content-inner">
-                          <div className="row">
-                            <div className="col-lg-7">
-                              <div className="apartments-plan-img">
-                                <img
-                                  src={publicUrl + "assets/img/others/10.png"}
-                                  alt="#"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-5">
-                              <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                                <h2>Second Floor</h2>
-                                <p>
-                                  Enimad minim veniam quis nostrud exercitation
-                                  ullamco laboris. Lorem ipsum dolor sit amet
-                                  cons aetetur adipisicing elit sedo eiusmod
-                                  tempor.Incididunt labore et dolore magna
-                                  aliqua. sed ayd minim veniam.
-                                </p>
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="product-details-apartments-info-list  section-bg-1">
-                                <div className="row">
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Total Area</label>{" "}
-                                          <span>2800 Sq. Ft</span>
-                                        </li>
-                                        <li>
-                                          <label>Bedroom</label>{" "}
-                                          <span>150 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Belcony/Pets</label>{" "}
-                                          <span>Allowed</span>
-                                        </li>
-                                        <li>
-                                          <label>Lounge</label>{" "}
-                                          <span>650 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="tab-pane fade" id="liton_tab_3_3">
-                        <div className="ltn__product-tab-content-inner">
-                          <div className="row">
-                            <div className="col-lg-7">
-                              <div className="apartments-plan-img">
-                                <img
-                                  src={publicUrl + "assets/img/others/10.png"}
-                                  alt="#"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-5">
-                              <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                                <h2>Third Floor</h2>
-                                <p>
-                                  Enimad minim veniam quis nostrud exercitation
-                                  ullamco laboris. Lorem ipsum dolor sit amet
-                                  cons aetetur adipisicing elit sedo eiusmod
-                                  tempor.Incididunt labore et dolore magna
-                                  aliqua. sed ayd minim veniam.
-                                </p>
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="product-details-apartments-info-list  section-bg-1">
-                                <div className="row">
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Total Area</label>{" "}
-                                          <span>2800 Sq. Ft</span>
-                                        </li>
-                                        <li>
-                                          <label>Bedroom</label>{" "}
-                                          <span>150 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Belcony/Pets</label>{" "}
-                                          <span>Allowed</span>
-                                        </li>
-                                        <li>
-                                          <label>Lounge</label>{" "}
-                                          <span>650 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="tab-pane fade" id="liton_tab_3_4">
-                        <div className="ltn__product-tab-content-inner">
-                          <div className="row">
-                            <div className="col-lg-7">
-                              <div className="apartments-plan-img">
-                                <img
-                                  src={publicUrl + "assets/img/others/10.png"}
-                                  alt="#"
-                                />
-                              </div>
-                            </div>
-                            <div className="col-lg-5">
-                              <div className="apartments-plan-info ltn__secondary-bg--- text-color-white---">
-                                <h2>Top Garden</h2>
-                                <p>
-                                  Enimad minim veniam quis nostrud exercitation
-                                  ullamco laboris. Lorem ipsum dolor sit amet
-                                  cons aetetur adipisicing elit sedo eiusmod
-                                  tempor.Incididunt labore et dolore magna
-                                  aliqua. sed ayd minim veniam.
-                                </p>
-                              </div>
-                            </div>
-                            <div className="col-lg-12">
-                              <div className="product-details-apartments-info-list  section-bg-1">
-                                <div className="row">
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Total Area</label>{" "}
-                                          <span>2800 Sq. Ft</span>
-                                        </li>
-                                        <li>
-                                          <label>Bedroom</label>{" "}
-                                          <span>150 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-6">
-                                    <div className="apartments-info-list apartments-info-list-color mt-40---">
-                                      <ul>
-                                        <li>
-                                          <label>Belcony/Pets</label>{" "}
-                                          <span>Allowed</span>
-                                        </li>
-                                        <li>
-                                          <label>Lounge</label>{" "}
-                                          <span>650 Sq. Ft</span>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                   {/* APARTMENTS PLAN AREA END */}
@@ -1006,6 +895,24 @@ function TaskDetails() {
           <Toaster />
         </div>
       )}
+      <Modal
+        isOpen={openModal}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={handleCloseModal}
+        style={customStylesModal}
+        ariaHideApp={false}
+      >
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Milestone</h2>
+        <MilestoneForm
+          flag={flag}
+          onClose={handleCloseModal}
+          setFlag={setFlag}
+          endTime={task?.time?.end}
+          taskId={id}
+          toast={toast}
+          mileStoneArray={task.milestones}
+        />
+      </Modal>
     </>
   );
 }
