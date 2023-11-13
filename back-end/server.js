@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 app.use('/api/tasks', taskRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/bid', bidRoutes)
-app.use('/messages', messageRoutes);
+app.use('/api/messages', messageRoutes);
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
