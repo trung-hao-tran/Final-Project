@@ -1,7 +1,7 @@
 const Message = require('../models/messageModel');
 
 // send message
-exports.sendMessage = async (req, res) => {
+const sendMessage = async (req, res) => {
   try {
     const { receiverId, messageText } = req.body;
     const message = await Message.create({
@@ -17,7 +17,7 @@ exports.sendMessage = async (req, res) => {
 
 
 // get all messages
-exports.getMessages = async (req, res) => {
+const getMessages = async (req, res) => {
     try {
       const userId = req.user._id;
       const messages = await Message.find({ receiverId: userId }).sort({ createdAt: -1 });
@@ -28,7 +28,7 @@ exports.getMessages = async (req, res) => {
 };
 
 // get conversation
-exports.getConversation = async (req, res) => {
+const getConversation = async (req, res) => {
     try {
       const { userId } = req.params; // User ID of the user to chat with
       const currentUserId = req.user._id; // Current user ID
@@ -45,7 +45,7 @@ exports.getConversation = async (req, res) => {
 };
 
 // mark as read
-exports.markAsRead = async (req, res) => {
+const markAsRead = async (req, res) => {
     try {
       const { messageId } = req.params;
       const message = await Message.findByIdAndUpdate(
@@ -60,4 +60,11 @@ exports.markAsRead = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
+  };
+
+  module.exports = {
+    sendMessage,
+    getMessages,
+    getConversation,
+    markAsRead
   };

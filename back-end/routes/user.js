@@ -20,8 +20,6 @@ const {
 
 const router = express.Router();
 
-const messageRoutes = require('./message');
-
 // login route
 router.post("/login", loginUser);
 
@@ -54,8 +52,5 @@ router.post("/report", requireAuth, addReport);
 
 // Payment
 router.post("/payment", requireAuth, payment);
-
-// Message
-router.use('/messages', messageRoutes);
 
 module.exports = router;

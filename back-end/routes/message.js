@@ -1,5 +1,10 @@
 const express = require('express');
-const { sendMessage, getMessages, getConversation, markAsRead } = require('../controllers/messageController');
+const { 
+    sendMessage, 
+    getMessages, 
+    getConversation, 
+    markAsRead 
+} = require('../controllers/messageController');
 const { requireAuth } = require('../middleware/requireAuth');
 
 const router = express.Router();
