@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   createTask,
+  getTasksByUserId,
   getTasks,
   getTask,
   deleteTask,
@@ -23,6 +24,9 @@ const router = express.Router();
 
 // GET all tasks
 router.get("/", getTasks);
+
+// GET all tasks
+router.get("/all/:id", getTasksByUserId);
 
 // GET a single task
 router.get("/:id", getTask);

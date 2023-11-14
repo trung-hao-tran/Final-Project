@@ -89,7 +89,7 @@ const TaskListItem = ({ task }) => {
                   src={
                     images && images.length > 0
                       ? images[0]
-                      : publicUrl + "assets/img/product-3/1.jpg"
+                      : publicUrl + "assets/img/default/task.png"
                   }
                   alt="#"
                 />

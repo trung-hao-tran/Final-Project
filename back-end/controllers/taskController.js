@@ -31,6 +31,23 @@ const getTasks = async (req, res) => {
   }
 };
 
+const getTasksByUserId = async (req, res) => {
+  try {
+    // Get the userId from request parameters
+    const { id } = req.params;
+
+    // Find tasks where taskId is the same as userId or userId matches the specified userId
+    const tasks = await Task.find({
+      $or: [{ taskId: id }, { user_id: id }],
+    }).sort({ updatedAt: -1 });
+    // Respond with the tasks
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // get a single task
 const getTask = async (req, res) => {
   const { id } = req.params;
@@ -180,7 +197,7 @@ const updateTask = async (req, res) => {
 
 // GET all taskers bidding on a given task
 const getTaskers = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No such task" });
   }
@@ -393,6 +410,7 @@ const getMilestonesForTask = async (req, res) => {
 
 module.exports = {
   getTasks,
+  getTasksByUserId,
   getTask,
   createTask,
   deleteTask,

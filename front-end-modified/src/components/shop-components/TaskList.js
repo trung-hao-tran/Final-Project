@@ -26,7 +26,7 @@ const TaskGrid = () => {
   }, []);
 
   const taskItems = rawTasks?.length
-    ? rawTasks.map((task) => <TaskListItem key={task} task={task} />)
+    ? rawTasks.map((task) => <TaskListItem key={task._id} task={task} />)
     : null;
 
   let publicUrl = process.env.PUBLIC_URL;

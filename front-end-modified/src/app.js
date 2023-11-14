@@ -7,10 +7,13 @@ import Prefetch from "./feature/auth/prefetch";
 
 import TaskListPage from "./components/TaskList";
 
-import MyAccount from "./components/my-account";
+import Profile from "./components/profile_component/profile";
 import Login from "./components/login";
 import Register from "./components/register";
 import TaskDetailsPage from "./components/task_details";
+
+import AboutPage from "./components/about";
+import ContactPage from "./components/contact";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,6 +22,8 @@ import {
   setUserId,
 } from "./feature/auth/authSlice";
 import AddTask from "./components/add-task";
+
+import EditTask from "./components/edit-task";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -81,10 +86,13 @@ const App = () => {
         <Route path="/tasks" element={<TaskListPage />} />
         <Route path="/" element={<HomeV1 />} index />
         <Route path="/tasks/:id" element={<TaskDetailsPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         {isAuthenticated ? (
           <>
             <Route path="/add-task" element={<AddTask />} />
-            <Route path="/profile" element={<MyAccount />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-task/:id" element={<EditTask />} />
           </>
         ) : (
           <>

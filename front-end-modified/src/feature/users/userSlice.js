@@ -2,15 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const usersSlice = createSlice({
   name: "users",
-  initialState: { user: null },
+  initialState: { user: null, isAdmin: false },
   reducers: {
     setCurrentUser: (state, action) => {
       state.user = action.payload;
     },
+    setIsAdmin: (state, action) => {
+      state.isAdmin = action.payload === "Admin" ? true : false;
+    },
   },
 });
 
-export const { setCurrentUser } = usersSlice.actions;
+export const { setCurrentUser, setIsAdmin } = usersSlice.actions;
 
 export default usersSlice.reducer;
 

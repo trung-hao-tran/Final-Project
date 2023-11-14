@@ -31,7 +31,7 @@ const MyAccountForm = ({ user, setCurrentData }) => {
   };
 
   const handleChangePhone = (e) => {
-    setPhoneData(e.target.value);
+    setPhoneData(e.target.value.replace(/\D/g, ""));
   };
 
   const handleChangeLocation = (e) => {
@@ -57,12 +57,13 @@ const MyAccountForm = ({ user, setCurrentData }) => {
   const isPasswordAdded = newPassword !== "" && validNewPassword;
 
   const isFormValid =
-    nameData !== name ||
-    phoneData !== phone ||
-    locationData !== address ||
-    imageData !== image ||
-    emailData !== email ||
-    isPasswordAdded;
+    !isLoading &&
+    (nameData !== name ||
+      phoneData !== phone ||
+      locationData !== address ||
+      imageData !== image ||
+      emailData !== email ||
+      isPasswordAdded);
 
   useEffect(() => {
     // Validate new password
@@ -121,6 +122,13 @@ const MyAccountForm = ({ user, setCurrentData }) => {
     }
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      setConfirmNewPassword("");
+      setNewPassword("");
+    }
+  }, [isSuccess]);
+
   return (
     <>
       <div className="ltn__form-box">
@@ -154,7 +162,7 @@ const MyAccountForm = ({ user, setCurrentData }) => {
             />
           </div>
           <div className="col-md-6">
-            <label>Phone: </label>
+            <label>Phone(+64): </label>
             <input
               type="text"
               name="ltn__phone"

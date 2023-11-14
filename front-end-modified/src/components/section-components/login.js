@@ -8,6 +8,7 @@ import {
   setAuthenticated,
   setUserId,
 } from "../../feature/auth/authSlice";
+import { setIsAdmin } from "../../feature/users/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,6 +32,7 @@ const Login = () => {
         dispatch(setCredentials(result));
         dispatch(setAuthenticated(true));
         dispatch(setUserId(result.userId));
+        dispatch(setIsAdmin(result.role));
         // Login successful, redirect or update UI as needed
         console.log("Login successful");
 
