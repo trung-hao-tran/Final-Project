@@ -11,13 +11,17 @@ import { setCurrentUser } from "../../feature/users/userSlice";
 import toast, { Toaster } from "react-hot-toast";
 import MyAccountForm from "./profile-form";
 import ProfileTaskItem from "./profile_taskItem";
-
-let taskList = [];
+import AdminUserItem from "./adminUserItem";
+import AdminTaskItem from "./adminTaskItem";
 
 const MyAccount = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.userId);
 
+  const [allTaskList, setAllTaskList] = useState([]);
+  const [allUserList, setAllUserList] = useState([]);
+  const isAdmin = useSelector((state) => state.users.isAdmin);
+  console.log(isAdmin);
   const [getCurrentUser] = useGetCurrentUserMutation();
   useEffect(() => {
     const fetchCurrentUserObject = async () => {
@@ -36,62 +40,114 @@ const MyAccount = () => {
     fetchCurrentUserObject();
   }, []);
 
-  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoadingTasks(true);
-    fetch(`http://localhost:4000/api/tasks/all/${userId}`)
+    setLoading(true);
+    fetch(`http://localhost:4000/api/tasks/`)
       .then((response) => response.json())
       .then((data) => {
-        taskList = data;
-        console.log(data);
-        setLoadingTasks(false);
+        setAllTaskList(data);
+        console.log("taskList", data);
+        setLoading(false);
       })
       .catch((error) => {
         console.log("error", error);
         toast.error(`Error fetching tasks: ${error}`);
-        setLoadingTasks(false);
+        setLoading(false);
       });
   }, []);
 
-  const ownedTasks = taskList?.filter((task) => task.user_id === userId)
-    .length ? (
-    taskList
-      .slice()
-      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-      .map((task) => <ProfileTaskItem key={task._id} task={task} />)
-  ) : (
-    <tr>
-      <td colSpan="10" style={{ border: "none" }}>
-        <div className="ltn__myaccount-tab-content-inner ">
-          <p>
-            You have no tasks. <Link to="/add-task">Start adding one now</Link>
-          </p>
-        </div>
-      </td>
-    </tr>
-  );
+  useEffect(() => {
+    setLoading(true);
+    fetch(`http://localhost:4000/api/user`)
+      .then((response) => response.json())
+      .then((data) => {
+        setAllUserList(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("error", error);
+        toast.error(`Error fetching tasks: ${error}`);
+        setLoading(false);
+      });
+  }, []);
 
-  const doingTasks = taskList?.filter((task) => task.tasker_id === userId)
-    .length ? (
-    taskList
-      .slice()
-      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-      .map((task) => <ProfileTaskItem key={task._id} task={task} />)
-  ) : (
-    <tr>
-      <td colSpan="10" style={{ border: "none" }}>
-        <div className="ltn__myaccount-tab-content-inner ">
-          <p>
-            You have no tasks. <Link to="/tasks">Start getting one now</Link>
-          </p>
-        </div>
-      </td>
-    </tr>
-  );
+  const [ownedTasks, setOwnedTasks] = useState([]);
+  const [doingTasks, setDoingTasks] = useState([]);
+  const [adminUserItems, setAdminUserItems] = useState([]);
+  const [adminTaskItems, setAdminTaskItems] = useState([]);
+
+  useEffect(() => {
+    // Update owned tasks
+    const updatedOwnedTasks = allTaskList?.filter(
+      (task) => task.user_id === userId
+    ).length ? (
+      allTaskList
+        .slice()
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        .map((task) => <ProfileTaskItem key={task._id} task={task} />)
+    ) : (
+      <tr>
+        <td colSpan="10" style={{ border: "none" }}>
+          <div className="ltn__myaccount-tab-content-inner ">
+            <p>
+              You have no tasks.{" "}
+              <Link to="/add-task">Start adding one now</Link>
+            </p>
+          </div>
+        </td>
+      </tr>
+    );
+    setOwnedTasks(updatedOwnedTasks);
+
+    // Update doing tasks
+    const updatedDoingTasks = allTaskList?.filter(
+      (task) => task.tasker_id === userId
+    ).length ? (
+      allTaskList
+        .filter((task) => task.tasker_id === userId)
+        .slice()
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        .map((task) => <ProfileTaskItem key={task._id} task={task} />)
+    ) : (
+      <tr>
+        <td colSpan="10" style={{ border: "none" }}>
+          <div className="ltn__myaccount-tab-content-inner ">
+            <p>
+              You have no tasks. <Link to="/tasks">Start getting one now</Link>
+            </p>
+          </div>
+        </td>
+      </tr>
+    );
+    setDoingTasks(updatedDoingTasks);
+
+    // Update admin user items
+    const updatedAdminUserItems = allUserList?.filter(
+      (user) => user._id !== userId
+    ).length ? (
+      allUserList
+        .filter((user) => user._id !== userId)
+        .sort((a, b) => b.report.length - a.report.length)
+        .map((userData) => <AdminUserItem user={userData} key={userData._id} />)
+    ) : (
+      <></>
+    );
+    setAdminUserItems(updatedAdminUserItems);
+
+    const updatedAdminTaskItems = allTaskList?.length ? (
+      allTaskList
+        // .sort((a, b) => b.report.length - a.report.length)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        .map((taskData) => <AdminTaskItem task={taskData} key={taskData._id} />)
+    ) : (
+      <></>
+    );
+    setAdminTaskItems(updatedAdminTaskItems);
+  }, [allUserList, allTaskList]);
 
   const userData = useSelector((state) => state.users.user);
-  console.log("userData", userData);
   let publicUrl = process.env.PUBLIC_URL + "/";
 
   return (
@@ -305,41 +361,41 @@ const MyAccount = () => {
                         </div>
                       </div>
 
-                      {/* Current Task tab */}
+                      {/* All users tab */}
                       <div className="tab-pane fade" id="ltn_tab_1_5">
                         <div className="ltn__myaccount-tab-content-inner">
                           <div className="ltn__my-properties-table table-responsive">
                             <table className="table">
                               <thead>
                                 <tr>
-                                  <th scope="col">Current Tasks</th>
+                                  <th scope="col">All Users</th>
                                   <th scope="col" />
-                                  <th scope="col">Last Updated</th>
+                                  <th scope="col">Role</th>
                                   <th scope="col">Actions</th>
                                   <th scope="col">Delete</th>
                                 </tr>
                               </thead>
-                              <tbody>{doingTasks}</tbody>
+                              <tbody>{adminUserItems}</tbody>
                             </table>
                           </div>
                         </div>
                       </div>
 
-                      {/* Current Task tab */}
+                      {/* All Tasks tab */}
                       <div className="tab-pane fade" id="ltn_tab_1_6">
                         <div className="ltn__myaccount-tab-content-inner">
                           <div className="ltn__my-properties-table table-responsive">
                             <table className="table">
                               <thead>
                                 <tr>
-                                  <th scope="col">Current Tasks</th>
+                                  <th scope="col">All Tasks</th>
                                   <th scope="col" />
-                                  <th scope="col">Last Updated</th>
+                                  <th scope="col">Date added</th>
                                   <th scope="col">Actions</th>
                                   <th scope="col">Delete</th>
                                 </tr>
                               </thead>
-                              <tbody>{doingTasks}</tbody>
+                              <tbody>{adminTaskItems}</tbody>
                             </table>
                           </div>
                         </div>

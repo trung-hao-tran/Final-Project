@@ -1,38 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ProfileTaskItem = ({ task }) => {
-  const { _id, title, images, address, status, updatedAt, milestones } = task;
-
-  const completedMileStone = milestones.filter(
-    (milestone) => milestone.status === "Completed"
-  );
-
-  const currentDate = new Date();
-  const overdueMilestones = milestones.filter(
-    (milestone) =>
-      milestone.status !== "Completed" && new Date(milestone.date) < currentDate
-  );
-
-  let summary = "";
-  let summary_style = {};
-  if (status === "Not Started") {
-    summary_style = { color: "orange" };
-  } else if (status === "Completed") {
-    summary_style = { color: "green" };
-  } else {
-    summary = completedMileStone.length + "/" + milestones.length;
-    if (overdueMilestones) {
-      summary_style = { color: "red" };
-    } else {
-      summary_style = { color: "green" };
-    }
-  }
+const AdminTaskItem = ({ task }) => {
+  const { _id, title, images, address, updatedAt } = task;
   let publicUrl = process.env.PUBLIC_URL + "/";
   const formattedUpdatedAt = new Date(updatedAt).toLocaleDateString();
-  const addressComponents = address.split(",");
+  const addressComponents = address?.split(",");
   const suburbState =
-    addressComponents.length >= 2
+    addressComponents?.length >= 2
       ? addressComponents[addressComponents.length - 2].trim()
       : address;
   return (
@@ -58,9 +33,6 @@ const ProfileTaskItem = ({ task }) => {
             <i className="icon-placeholder" /> {suburbState}
           </small>
           <br />
-          <small style={summary_style}>
-            {status} {summary}
-          </small>
         </div>
       </td>
       <td>{formattedUpdatedAt}</td>
@@ -76,4 +48,4 @@ const ProfileTaskItem = ({ task }) => {
   );
 };
 
-export default ProfileTaskItem;
+export default AdminTaskItem;
