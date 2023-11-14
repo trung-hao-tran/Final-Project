@@ -3,7 +3,7 @@ const Bid = require('../models/bidModel')
 const mongoose = require('mongoose');
 
 const getBid = async (req, res) => {
-  const { id, sort } = req.params;
+  const { id, sort } = req.body;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No such task" });
   }
