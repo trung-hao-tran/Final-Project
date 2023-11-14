@@ -16,6 +16,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Modal from "react-modal";
 import MilestoneForm from "./milestone-form";
 import MileStoneEditForm from "./milestone-edit-form";
+
 const customStylesModal = {
   content: {
     top: "50%",
@@ -44,11 +45,15 @@ function TaskDetails() {
   const [user, setUser] = useState({}); //store user info
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   console.log("isAuthenticated", isAuthenticated);
   console.log("token", token);
   console.log("userId", userId);
+
+  const userIdInTask = task?.user_id;
+  console.log("User id in task", userIdInTask);
   const begin = { lat: -33.9175, lng: 151.2303 };
   const libraries = ["places"];
   const [map, setMap] = useState(/** @type google.maps.Map */ (null));
@@ -68,6 +73,9 @@ function TaskDetails() {
 
   // set flag for re-fetch API
   const [flag, setFlag] = useState(false);
+
+  // bid ladder
+  const [bidLadder, setBidLadder] = useState(null);
 
   let subtitle;
   Modal.setAppElement("#quarter");
@@ -122,7 +130,7 @@ function TaskDetails() {
 
   const handleSubmitBid = async () => {
     const value = {
-      bid: bid,
+      price: bid,
       description: description,
       user_id: userId,
       task_id: id,
@@ -145,6 +153,8 @@ function TaskDetails() {
           "Submitted Bid Successfully! Task Owner will be notified and contact you soon!"
         );
         setLoadingBid(false);
+        setBid("");
+        setDescription("");
       } else {
         toast.error("Request Error");
         setLoadingBid(false);
@@ -222,6 +232,22 @@ function TaskDetails() {
         setLoadingTask(false);
       });
   }, [id, flag]);
+
+  // Get Bid ladder
+
+  useEffect(() => {
+    setLoadingTask(true);
+
+      fetch(`http://localhost:4000/api/bid/${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("fetched Bid ladder", data);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    
+  }, []);
 
   useEffect(() => {
     if (isLoaded && task.address) {
@@ -909,61 +935,71 @@ function TaskDetails() {
                     </form>
                   </div> */}
                   {/* Form Widget */}
-                  <div className="widget ltn__form-widget">
-                    <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                      Bid your task
-                    </h4>
+                  {userIdInTask !== userId ? (
+                    <div className="widget ltn__form-widget">
+                      <h4 className="ltn__widget-title ltn__widget-title-border-2">
+                        Bid this task
+                      </h4>
 
-                    {isAuthenticated ? (
-                      <>
-                        <input
-                          type="text"
-                          name="bid"
-                          inputMode="numeric"
-                          placeholder="Bid your price (in AUD)*"
-                          value={bid}
-                          onChange={handleChangeBid}
-                        />
+                      {isAuthenticated ? (
+                        <>
+                          <input
+                            type="text"
+                            name="bid"
+                            inputMode="numeric"
+                            placeholder="Bid your price (in AUD)*"
+                            value={bid}
+                            onChange={handleChangeBid}
+                          />
 
-                        <textarea
-                          name="yourmessage"
-                          placeholder="Write description..."
-                          value={description}
-                          onChange={handleChangeDescription}
-                        />
+                          <textarea
+                            name="yourmessage"
+                            placeholder="Write description..."
+                            value={description}
+                            onChange={handleChangeDescription}
+                          />
 
-                        <button
-                          onClick={handleSubmitBid}
-                          className="btn theme-btn-1"
-                          disabled={
-                            loadingBid ||
-                            bid.length < 1 ||
-                            description.length < 1
-                          }
-                        >
-                          Send Bid
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <p>You are not currently logged in</p>
-                        <p>
-                          Please
                           <button
-                            style={{
-                              background: "transparent",
-                            }}
-                            onClick={handleNavigateLogin}
+                            onClick={handleSubmitBid}
+                            className="btn theme-btn-1"
+                            disabled={
+                              loadingBid ||
+                              bid.length < 1 ||
+                              description.length < 1
+                            }
                           >
-                            <Link>
-                              <strong> log in</strong>
-                            </Link>{" "}
+                            Send Bid
                           </button>
-                          to bid for task!
-                        </p>
-                      </>
-                    )}
-                  </div>
+                        </>
+                      ) : (
+                        <>
+                          <p>You are not currently logged in</p>
+                          <p>
+                            Please
+                            <button
+                              style={{
+                                background: "transparent",
+                              }}
+                              onClick={handleNavigateLogin}
+                            >
+                              <Link>
+                                <strong> log in</strong>
+                              </Link>{" "}
+                            </button>
+                            to bid for task!
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="widget ltn__form-widget">
+                        <h4 className="ltn__widget-title ltn__widget-title-border-2">
+                          Bid ladder
+                        </h4>
+                      </div>
+                    </>
+                  )}
                 </aside>
               </div>
             </div>
