@@ -1,18 +1,19 @@
-/* eslint-disable react/react-in-jsx-scope */
-import React, { useState, useRef, useEffect } from "react";
+// EditUserModal.js
+import React, { useRef, useState, useEffect } from "react";
+import ReactModal from "react-modal";
 import { useUpdateUserMutation } from "../../feature/users/usersApiSlice";
 import { setCurrentUser } from "../../feature/users/userSlice";
 import { useDispatch } from "react-redux";
 
-const MyAccountForm = ({ user, setCurrentData }) => {
+const EditUserModal = ({ isOpen, closeModal, user }) => {
+  const [editedUser, setEditedUser] = useState({ ...user });
+
   const [updateUser, { isLoading, isSuccess, isError, error }] =
     useUpdateUserMutation();
 
-  const dispatch = useDispatch();
-
   const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
   const { name, email, address, phone, image } = user;
-  let publicUrl = process.env.PUBLIC_URL;
 
   const [nameData, setNameData] = useState(name);
   const [phoneData, setPhoneData] = useState(phone);
@@ -128,9 +129,26 @@ const MyAccountForm = ({ user, setCurrentData }) => {
   }, [isSuccess]);
 
   return (
-    <>
+    <ReactModal
+      isOpen={isOpen}
+      onRequestClose={closeModal}
+      contentLabel="Edit User Modal"
+      style={{
+        overlay: {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        content: {
+          width: "60%",
+          maxWidth: "700px",
+          margin: "auto",
+          padding: "20px",
+          borderRadius: "8px",
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
+        },
+      }}
+    >
       <div className="ltn__form-box">
-        <div className="row mb-50">
+        <div className="row mb-50" style={{ marginBottom: "15px" }}>
           <div
             className="ltn-author-introducing col-md-12"
             style={{ border: 0 }}
@@ -189,31 +207,7 @@ const MyAccountForm = ({ user, setCurrentData }) => {
             />
           </div>
         </div>
-        <fieldset>
-          <legend>Password change</legend>
-          <div className="row">
-            <div className="col-md-12">
-              <label>New password (leave blank to leave unchanged):</label>
-              <input
-                type="password"
-                name="newPassword"
-                value={newPassword}
-                onChange={handlePasswordChange}
-              />
-              <label>Confirm new password:</label>
-              <input
-                type="password"
-                name="confirmNewPassword"
-                value={confirmNewPassword}
-                onChange={handleConfirmPasswordChange}
-              />
-              {!validNewPassword && (
-                <p className="errmsg">Passwords do not match.</p>
-              )}
-            </div>
-          </div>
-        </fieldset>
-        <div className="btn-wrapper">
+        <div className="btn-wrapper" style={{ marginTop: "0px" }}>
           <button
             type="submit"
             className="btn theme-btn-1 btn-effect-1 text-uppercase"
@@ -222,10 +216,16 @@ const MyAccountForm = ({ user, setCurrentData }) => {
           >
             Save Changes
           </button>
+          <button
+            className="btn theme-btn-1 btn-effect-1 text-uppercase"
+            onClick={closeModal}
+          >
+            Close
+          </button>
         </div>
       </div>
-    </>
+    </ReactModal>
   );
 };
 
-export default MyAccountForm;
+export default EditUserModal;
