@@ -16,6 +16,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Modal from "react-modal";
 import MilestoneForm from "./milestone-form";
 import MileStoneEditForm from "./milestone-edit-form";
+
 const customStylesModal = {
   content: {
     top: "50%",
@@ -42,13 +43,16 @@ function TaskDetails() {
   const [task, setTaskDetails] = useState({});
   const [loadingTask, setLoadingTask] = useState(false);
   const [user, setUser] = useState({}); //store user info
-
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   console.log("isAuthenticated", isAuthenticated);
   console.log("token", token);
   console.log("userId", userId);
+
+  const userIdInTask = task?.user_id;
+  console.log("User id in task", userIdInTask);
   const begin = { lat: -33.9175, lng: 151.2303 };
   const libraries = ["places"];
   const [map, setMap] = useState(/** @type google.maps.Map */ (null));
@@ -68,6 +72,9 @@ function TaskDetails() {
 
   // set flag for re-fetch API
   const [flag, setFlag] = useState(false);
+
+  // bid ladder
+  const [bidLadder, setBidLadder] = useState(null);
 
   let subtitle;
   Modal.setAppElement("#quarter");
@@ -122,7 +129,7 @@ function TaskDetails() {
 
   const handleSubmitBid = async () => {
     const value = {
-      bid: bid,
+      price: bid,
       description: description,
       user_id: userId,
       task_id: id,
@@ -145,6 +152,8 @@ function TaskDetails() {
           "Submitted Bid Successfully! Task Owner will be notified and contact you soon!"
         );
         setLoadingBid(false);
+        setBid("");
+        setDescription("");
       } else {
         toast.error("Request Error");
         setLoadingBid(false);
@@ -214,6 +223,19 @@ function TaskDetails() {
             console.log("error", error);
             toast.error(`Error fetching user: ${error}`);
           });
+
+        // fetch bidding
+
+        fetch(`http://localhost:4000/api/bid/${id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setBidLadder(data);
+          })
+          .catch((error) => {
+            console.log("error", error);
+            toast.error(`Error fetching bid ladder: ${error}`);
+          });
+
         setLoadingTask(false);
       })
       .catch((error) => {
@@ -222,6 +244,8 @@ function TaskDetails() {
         setLoadingTask(false);
       });
   }, [id, flag]);
+
+  // Get Bid ladder
 
   useEffect(() => {
     if (isLoaded && task.address) {
@@ -287,6 +311,12 @@ function TaskDetails() {
       setLoadingDelete(false);
     }
   };
+
+  console.log("bidLadder fetched", bidLadder);
+
+  // api : "/taskers/:taskId/:taskerId"
+  // params: :taskId, :taskerId as userId
+  const handleAcceptTask = async (taskId, userId) => {};
   return (
     <>
       {loadingTask ? (
@@ -909,61 +939,126 @@ function TaskDetails() {
                     </form>
                   </div> */}
                   {/* Form Widget */}
-                  <div className="widget ltn__form-widget">
-                    <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                      Bid your task
-                    </h4>
+                  {userIdInTask !== userId ? (
+                    <div className="widget ltn__form-widget">
+                      <h4 className="ltn__widget-title ltn__widget-title-border-2">
+                        Bid this task
+                      </h4>
 
-                    {isAuthenticated ? (
-                      <>
-                        <input
-                          type="text"
-                          name="bid"
-                          inputMode="numeric"
-                          placeholder="Bid your price (in AUD)*"
-                          value={bid}
-                          onChange={handleChangeBid}
-                        />
+                      {isAuthenticated ? (
+                        <>
+                          <input
+                            type="text"
+                            name="bid"
+                            inputMode="numeric"
+                            placeholder="Bid your price (in AUD)*"
+                            value={bid}
+                            onChange={handleChangeBid}
+                          />
 
-                        <textarea
-                          name="yourmessage"
-                          placeholder="Write description..."
-                          value={description}
-                          onChange={handleChangeDescription}
-                        />
+                          <textarea
+                            name="yourmessage"
+                            placeholder="Write description..."
+                            value={description}
+                            onChange={handleChangeDescription}
+                          />
 
-                        <button
-                          onClick={handleSubmitBid}
-                          className="btn theme-btn-1"
-                          disabled={
-                            loadingBid ||
-                            bid.length < 1 ||
-                            description.length < 1
-                          }
-                        >
-                          Send Bid
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <p>You are not currently logged in</p>
-                        <p>
-                          Please
                           <button
-                            style={{
-                              background: "transparent",
-                            }}
-                            onClick={handleNavigateLogin}
+                            onClick={handleSubmitBid}
+                            className="btn theme-btn-1"
+                            disabled={
+                              loadingBid ||
+                              bid.length < 1 ||
+                              description.length < 1
+                            }
                           >
-                            <Link>
-                              <strong> log in</strong>
-                            </Link>{" "}
+                            Send Bid
                           </button>
-                          to bid for task!
-                        </p>
-                      </>
-                    )}
-                  </div>
+                        </>
+                      ) : (
+                        <>
+                          <p>You are not currently logged in</p>
+                          <p>
+                            Please
+                            <button
+                              style={{
+                                background: "transparent",
+                              }}
+                              onClick={handleNavigateLogin}
+                            >
+                              <Link>
+                                <strong> log in</strong>
+                              </Link>{" "}
+                            </button>
+                            to bid for task!
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        style={{ overflowY: "auto", maxHeight: 550 }}
+                        className="widget ltn__form-widget"
+                      >
+                        <h4 className="ltn__widget-title ltn__widget-title-border-2">
+                          Bid ladder
+                        </h4>
+                        <br />
+                        {bidLadder?.map((v) => (
+                          <div key={v?._id} className="mt-20 mb-20">
+                            <div className="row ">
+                              <div className="col-md-3">
+                                <Link to={`/user/${v?.user?.id}`}>
+                                  <img
+                                    width={30}
+                                    src={
+                                      v?.image
+                                        ? v?.image
+                                        : publicUrl +
+                                          "assets/img/default/user.png"
+                                    }
+                                    alt="#"
+                                    className="mb-10"
+                                  />
+                                </Link>
+                                <br />
+                                <h6 className="mb-5 go-top">
+                                  <Link to={`/user/${v?.user?.id}`}>
+                                    {v?.user?.name}
+                                  </Link>
+                                </h6>
+                              </div>
+                              <div className="col-md-6">
+                                <div className="ltn__my-properties-info">
+                                  <small>
+                                    <i className="icon-dollar" />{" "}
+                                    {`$ ${v?.bid}`}
+                                  </small>
+                                  <br />
+                                  <small>
+                                    <i className="icon-info" />
+                                    {v?.description}
+                                  </small>
+                                </div>
+                              </div>
+                              <div className="col-md-3">
+                                <button
+                                  style={{
+                                    backgroundColor: "green",
+                                    color: "white",
+                                  }}
+                                >
+                                  Accept
+                                </button>
+                              </div>
+                            </div>
+                            <hr className="rounded" />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </aside>
               </div>
             </div>
