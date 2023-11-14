@@ -136,6 +136,26 @@ const createTask = async (req, res) => {
   }
 };
 
+const adminDeleteTask = async (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    // Find the task by ID and remove it
+    const deletedTask = await Task.findByIdAndRemove(taskId);
+
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Optionally, you can perform additional actions after deletion
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 // delete a task
 const deleteTask = async (req, res) => {
   const user_id = req.user._id;
@@ -413,6 +433,7 @@ module.exports = {
   getTasksByUserId,
   getTask,
   createTask,
+  adminDeleteTask,
   deleteTask,
   updateTask,
   getTaskers,

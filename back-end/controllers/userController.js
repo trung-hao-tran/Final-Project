@@ -73,8 +73,8 @@ function deleteUser(req, res) {
 
   // Use Mongoose to find by ID and delete the user
   User.findByIdAndDelete(userId)
-    .then(() => res.send("User deleted successfully"))
-    .catch((err) => res.status(400).send(err.message));
+    .then(() => res.status(200).json({ message: "User deleted successfully" }))
+    .catch((err) => res.status(400).json({ error: err.message }));
 }
 
 // check authentification saparately

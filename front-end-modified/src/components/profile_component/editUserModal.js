@@ -1,29 +1,22 @@
 // EditUserModal.js
 import React, { useRef, useState, useEffect } from "react";
 import ReactModal from "react-modal";
-import { useUpdateUserMutation } from "../../feature/users/usersApiSlice";
-import { setCurrentUser } from "../../feature/users/userSlice";
+import { useAdminUpdateUserMutation } from "../../feature/users/usersApiSlice";
 import { useDispatch } from "react-redux";
 
 const EditUserModal = ({ isOpen, closeModal, user }) => {
-  const [editedUser, setEditedUser] = useState({ ...user });
-
-  const [updateUser, { isLoading, isSuccess, isError, error }] =
-    useUpdateUserMutation();
+  const [adminUpdateUser, { isLoading, isSuccess, isError, error }] =
+    useAdminUpdateUserMutation();
 
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
-  const { name, email, address, phone, image } = user;
+  const { _id, name, email, address, phone, image } = user;
 
   const [nameData, setNameData] = useState(name);
   const [phoneData, setPhoneData] = useState(phone);
   const [locationData, setLocationData] = useState(address);
   const [emailData, setEmailData] = useState(email);
   const [imageData, setImageData] = useState(image);
-
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [validNewPassword, setValidNewPassword] = useState(true);
 
   const handleChangeName = (e) => {
     setNameData(e.target.value);
@@ -45,29 +38,13 @@ const EditUserModal = ({ isOpen, closeModal, user }) => {
     fileInputRef.current.click();
   };
 
-  const handlePasswordChange = (e) => {
-    setNewPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmNewPassword(e.target.value);
-  };
-
-  const isPasswordAdded = newPassword !== "" && validNewPassword;
-
   const isFormValid =
     !isLoading &&
     (nameData !== name ||
       phoneData !== phone ||
       locationData !== address ||
       imageData !== image ||
-      emailData !== email ||
-      isPasswordAdded);
-
-  useEffect(() => {
-    // Validate new password
-    setValidNewPassword(newPassword === confirmNewPassword);
-  }, [newPassword, confirmNewPassword]);
+      emailData !== email);
 
   const handleChangeImage = (e) => {
     const files = e.target.files;
@@ -98,35 +75,17 @@ const EditUserModal = ({ isOpen, closeModal, user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isFormValid) {
-      if (isPasswordAdded) {
-        const res = await updateUser({
-          name: nameData,
-          email: emailData,
-          password: newPassword,
-          address: locationData,
-          phone: phoneData,
-          image: imageData,
-        });
-        dispatch(setCurrentUser(res.data));
-      } else {
-        const res = await updateUser({
-          name: nameData,
-          email: emailData,
-          address: locationData,
-          phone: phoneData,
-          image: imageData,
-        });
-        dispatch(setCurrentUser(res.data));
-      }
+      await adminUpdateUser({
+        id: _id,
+        name: nameData,
+        email: emailData,
+        address: locationData,
+        phone: phoneData,
+        image: imageData,
+      });
+      closeModal(true);
     }
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setConfirmNewPassword("");
-      setNewPassword("");
-    }
-  }, [isSuccess]);
 
   return (
     <ReactModal

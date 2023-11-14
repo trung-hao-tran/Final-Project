@@ -8,7 +8,7 @@ const usersSlice = createSlice({
       state.user = action.payload;
     },
     setIsAdmin: (state, action) => {
-      state.isAdmin = action.payload === "Admin" ? true : false;
+      state.isAdmin = action.payload === "admin" ? true : false;
     },
   },
 });

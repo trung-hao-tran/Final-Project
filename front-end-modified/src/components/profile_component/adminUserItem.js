@@ -1,18 +1,37 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import EditUserModal from "./editUserModal";
+import DeleteUserModal from "./deleteUserModel";
 
-const AdminUserItem = ({ user }) => {
+const AdminUserItem = ({ user, setChange }) => {
   const { _id, name, email, address, image, role } = user;
+  console.log(role);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = (isSuccess) => {
+    console.log("editing", isSuccess);
+    setChange(isSuccess);
     setIsModalOpen(false);
+  };
+
+  const openDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = (isSuccess) => {
+    setChange(isSuccess);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDelete = () => {
+    // Handle deletion, e.g., update state or fetch updated user list
+    console.log("User deleted successfully.");
   };
 
   let publicUrl = process.env.PUBLIC_URL + "/";
@@ -51,8 +70,14 @@ const AdminUserItem = ({ user }) => {
         />
       </td>
       <td>
-        <Link to="#">
+        <Link to="#" onClick={openDeleteModal}>
           <i className="fa-solid fa-trash-can" />
+          <DeleteUserModal
+            isOpen={isDeleteModalOpen}
+            closeModal={closeDeleteModal}
+            userId={user._id}
+            onDelete={handleDelete}
+          />
         </Link>
       </td>
     </tr>
