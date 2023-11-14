@@ -32,6 +32,7 @@ const getBid = async (req, res) => {
             id: userData._id,
             name: userData.name,
             email: userData.email,
+            image: userData.image,
           };
         }
 

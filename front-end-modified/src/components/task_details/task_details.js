@@ -43,7 +43,6 @@ function TaskDetails() {
   const [task, setTaskDetails] = useState({});
   const [loadingTask, setLoadingTask] = useState(false);
   const [user, setUser] = useState({}); //store user info
-
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const token = useSelector((state) => state.auth.token);
@@ -224,6 +223,19 @@ function TaskDetails() {
             console.log("error", error);
             toast.error(`Error fetching user: ${error}`);
           });
+
+        // fetch bidding
+
+        fetch(`http://localhost:4000/api/bid/${id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setBidLadder(data);
+          })
+          .catch((error) => {
+            console.log("error", error);
+            toast.error(`Error fetching bid ladder: ${error}`);
+          });
+
         setLoadingTask(false);
       })
       .catch((error) => {
@@ -234,20 +246,6 @@ function TaskDetails() {
   }, [id, flag]);
 
   // Get Bid ladder
-
-  useEffect(() => {
-    setLoadingTask(true);
-
-      fetch(`http://localhost:4000/api/bid/${id}`)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("fetched Bid ladder", data);
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
-    
-  }, []);
 
   useEffect(() => {
     if (isLoaded && task.address) {
@@ -313,6 +311,12 @@ function TaskDetails() {
       setLoadingDelete(false);
     }
   };
+
+  console.log("bidLadder fetched", bidLadder);
+
+  // api : "/taskers/:taskId/:taskerId"
+  // params: :taskId, :taskerId as userId
+  const handleAcceptTask = async (taskId, userId) => {};
   return (
     <>
       {loadingTask ? (
@@ -993,10 +997,65 @@ function TaskDetails() {
                     </div>
                   ) : (
                     <>
-                      <div className="widget ltn__form-widget">
+                      <div
+                        style={{ overflowY: "auto", maxHeight: 550 }}
+                        className="widget ltn__form-widget"
+                      >
                         <h4 className="ltn__widget-title ltn__widget-title-border-2">
                           Bid ladder
                         </h4>
+                        <br />
+                        {bidLadder?.map((v) => (
+                          <div key={v?._id} className="mt-20 mb-20">
+                            <div className="row ">
+                              <div className="col-md-3">
+                                <Link to={`/user/${v?.user?.id}`}>
+                                  <img
+                                    width={30}
+                                    src={
+                                      v?.image
+                                        ? v?.image
+                                        : publicUrl +
+                                          "assets/img/default/user.png"
+                                    }
+                                    alt="#"
+                                    className="mb-10"
+                                  />
+                                </Link>
+                                <br />
+                                <h6 className="mb-5 go-top">
+                                  <Link to={`/user/${v?.user?.id}`}>
+                                    {v?.user?.name}
+                                  </Link>
+                                </h6>
+                              </div>
+                              <div className="col-md-6">
+                                <div className="ltn__my-properties-info">
+                                  <small>
+                                    <i className="icon-dollar" />{" "}
+                                    {`$ ${v?.bid}`}
+                                  </small>
+                                  <br />
+                                  <small>
+                                    <i className="icon-info" />
+                                    {v?.description}
+                                  </small>
+                                </div>
+                              </div>
+                              <div className="col-md-3">
+                                <button
+                                  style={{
+                                    backgroundColor: "green",
+                                    color: "white",
+                                  }}
+                                >
+                                  Accept
+                                </button>
+                              </div>
+                            </div>
+                            <hr className="rounded" />
+                          </div>
+                        ))}
                       </div>
                     </>
                   )}

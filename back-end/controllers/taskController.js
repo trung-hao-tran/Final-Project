@@ -318,19 +318,16 @@ const filterTasks = async (req, res) => {
 };
 
 const addMilestoneToTask = async (req, res) => {
-  console.log("triggered");
   const { id } = req.params; // Task id
   console.log("req.body", req.body);
   console.log(typeof req.body);
-  console.log("check");
+
   if (!req.body) {
     return res.status(400).json({ error: "No data for milestones" });
   }
 
   try {
     const milestones = req.body;
-
-    console.log("milestones", milestones);
 
     if (!Array.isArray(milestones)) {
       return res.status(400).json({ error: "Invalid data for milestones" });
