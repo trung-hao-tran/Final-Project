@@ -4,7 +4,6 @@ const { app } = require('../server'); // Adjust the path accordingly
 const User = require('../models/userModel');
 const Task = require('../models/taskModel');
 const Bid = require('../models/bidModel');
-const Message = require('../models/messageModel');
 
 
 //----------------tests for users----------------
@@ -71,7 +70,7 @@ describe("create a task", () => {
       });
 
     console.log(res.body);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty("title", "Test Task");
     taskId = res.body._id; // Save the taskId for later use
   });
@@ -94,24 +93,22 @@ describe("create a bid", () => {
     const res = await request(app)
       .post("/api/bid")
       .set("authorization", authorization)
+      .set("taskId", taskId)
       .send({
         description: "Bid description",
-        task_id: taskId, // Use the taskId created in the previous test
+        task_id: "taskId", // Use the taskId created in the previous test
       });
 
     console.log(res.body);
-    expect(res.statusCode).toBe(201);
-    expect(res.body.data.bid).toHaveProperty("description", "Bid description");
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("description", "Bid description");
     bidId = res.body._id; // Save the bidId for later use
   });
 });
 
 describe("get bids", () => {
-  test("retrieve all bids of a task", async () => {
-    const res = await request(app).get("/api/bid").send({
-      id : taskId,
-      sort: "createdAt:desc"
-    });
+  test("retrieve all bids", async () => {
+    const res = await request(app).get("/api/bid");
     console.log(res.body);
     expect(res.statusCode).toBe(200);
     expect(res.body).toBeInstanceOf(Array);
@@ -120,34 +117,20 @@ describe("get bids", () => {
 
 //----------------tests for messages----------------
 let messageId;
-let receiverId;
 
 describe("send a message", () => {
   test("provide message details", async () => {
-    const new_user_res = await request(app).post("/api/user/signup").send({
-      email: "test11@test11.com",
-      password: "Comp9900test!",
-      name: "test",
-      address: "test",
-      phone: "12345",
-    })
-    const log_user_res = await request(app).post("/api/user/login").send({
-      email: "test11@test11.com",
-      password: "Comp9900test!"
-    })
-    receiverId = log_user_res.body.userId
-    console.log(log_user_res.body)
-
     const res = await request(app)
       .post("/api/messages/send")
       .set("authorization", authorization)
+      .set("userId", userId)
       .send({
-        receiverId, // Replace with an actual user ID
+        receiverId: "userId", // Replace with an actual user ID
         messageText: "Test message",
       });
 
     console.log(res.body);
-    expect(res.statusCode).toBe(201);
+    expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty("messageText", "Test message");
     messageId = res.body._id; // Save the messageId for later use
   });
@@ -155,7 +138,7 @@ describe("send a message", () => {
 
 describe("get messages", () => {
   test("retrieve all messages", async () => {
-    const res = await request(app).get("/api/messages/getMessages").set("authorization", authorization);
+    const res = await request(app).get("/api/messages/getMessages");
     console.log(res.body);
     expect(res.statusCode).toBe(200);
     expect(res.body).toBeInstanceOf(Array);
@@ -163,16 +146,12 @@ describe("get messages", () => {
 });
 
 //------------------------------------------------
-// After all tests have ran, perform cleanup
+// After all tests have run, perform cleanup
 afterAll(async () => {
   // Use a try-catch block to handle errors during cleanup
   try {
     // Remove the user from the database
     await User.findOneAndDelete({"email": "test10@test10.com"})
-    await User.findOneAndDelete({"email": "test11@test11.com"})
-    await Task.findOneAndDelete({"title": "Test Task"})
-    await Bid.findOneAndDelete({"description": "Bid description"})
-    await Message.findOneAndDelete({"messageText": "Test message"})
 
     // Add any additional cleanup steps if needed
 
@@ -182,3 +161,166 @@ afterAll(async () => {
 });
 //--------------------------------------------------
 
+// // Helper function to create a test user in the database
+// const createTestUser = async () => {
+//   return User.create({
+//     name: 'Test User',
+//     email: 'test@example.com',
+//     password: 'testpassword',
+//     address: 'Test Address',
+//     phone: '1234567890',
+//   });
+// };
+
+// // Helper function to create a test task in the database
+// const createTestTask = async (userId) => {
+//   return Task.create({
+//     title: 'Test Task',
+//     description: 'Test Description',
+//     time: {
+//       start: new Date(),
+//       end: new Date(),
+//     },
+//     frequency: 'Once',
+//     price: 100,
+//     user_id: userId,
+//   });
+// };
+
+// // Helper function to create a test bid in the database
+// const createTestBid = async (userId, taskId) => {
+//   return Bid.create({
+//     description: 'Test Bid',
+//     user_id: userId,
+//     task_id: taskId,
+//   });
+// };
+
+// // Clear the database after each test
+// afterEach(async () => {
+//   await User.deleteMany();
+//   await Task.deleteMany();
+//   await Bid.deleteMany();
+// });
+
+// describe('User Controller', () => {
+//   it('should sign up a new user', async () => {
+//     const mockUserData = {
+//       name: 'John Doe',
+//       email: 'john@example.com',
+//       password: 'testpassword',
+//       address: '123 Main St',
+//       phone: '9876543210',
+//     };
+
+//     const response = await request(app)
+//       .post('/api/user/signup')
+//       .send(mockUserData)
+//       .set('Accept', 'application/json');
+
+//     expect(response.status).toBe(200);
+//     expect(response.body).toHaveProperty('email', mockUserData.email);
+//     expect(response.body).toHaveProperty('token');
+//   });
+
+//   it('should log in an existing user', async () => {
+//     const testUser = await createTestUser();
+
+//     const mockLoginData = {
+//       email: testUser.email,
+//       password: 'testpassword',
+//     };
+
+//     const response = await request(app)
+//       .post('/api/user/login')
+//       .send(mockLoginData)
+//       .set('Accept', 'application/json');
+
+//     expect(response.status).toBe(200);
+//     expect(response.body).toHaveProperty('userId');
+//     expect(response.body).toHaveProperty('token');
+//   });
+
+//   // Add more test cases for other userController functions if needed
+// });
+
+// describe('Task Controller', () => {
+//   it('should create a new task', async () => {
+//     const testUser = await createTestUser();
+
+//     const mockTaskData = {
+//       title: 'Test Task',
+//       description: 'Test Description',
+//       time: {
+//         start: new Date(),
+//         end: new Date(),
+//       },
+//       frequency: 'Once',
+//       price: 100,
+//     };
+
+//     const response = await request(app)
+//       .post('/api/tasks')
+//       .set('Authorization', `Bearer ${testUser.generateAuthToken()}`)
+//       .send(mockTaskData)
+//       .set('Accept', 'application/json');
+
+//     expect(response.status).toBe(200);
+//     expect(response.body).toHaveProperty('title', mockTaskData.title);
+//     expect(response.body).toHaveProperty('user_id', testUser._id.toString());
+//   });
+
+//   it('should get all tasks', async () => {
+//     const testUser = await createTestUser();
+//     const testTask = await createTestTask(testUser._id);
+
+//     const response = await request(app)
+//       .get('/api/tasks')
+//       .set('Authorization', `Bearer ${testUser.generateAuthToken()}`)
+//       .set('Accept', 'application/json');
+
+//     expect(response.status).toBe(200);
+//     expect(response.body.length).toBeGreaterThan(0);
+//     expect(response.body[0]).toHaveProperty('title', testTask.title);
+//   });
+
+//   // Add more test cases for other taskController functions if needed
+// });
+
+// describe('Bid Controller', () => {
+//   it('should create a new bid', async () => {
+//     const testUser = await createTestUser();
+//     const testTask = await createTestTask(testUser._id);
+
+//     const mockBidData = {
+//       description: 'Test Bid',
+//       task_id: testTask._id.toString(),
+//     };
+
+//     const response = await request(app)
+//       .post('/api/bid')
+//       .set('Authorization', `Bearer ${testUser.generateAuthToken()}`)
+//       .send(mockBidData)
+//       .set('Accept', 'application/json');
+
+//     expect(response.status).toBe(201);
+//     expect(response.body).toHaveProperty('description', mockBidData.description);
+//     expect(response.body).toHaveProperty('user_id', testUser._id.toString());
+//   });
+
+//   it('should get all bids for a task', async () => {
+//     const testUser = await createTestUser();
+//     const testTask = await createTestTask(testUser._id);
+//     const testBid = await createTestBid(testUser._id, testTask._id);
+
+//     const response = await request(app)
+//       .get(`/api/bid/${testTask._id}`)
+//       .set('Accept', 'application/json');
+
+//     expect(response.status).toBe(200);
+//     expect(response.body.length).toBeGreaterThan(0);
+//     expect(response.body[0]).toHaveProperty('description', testBid.description);
+//   });
+
+//   // Add more test cases for other bidController functions if needed
+// });

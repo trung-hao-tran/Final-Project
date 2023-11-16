@@ -5,6 +5,7 @@ import { setAuthenticated, setCredentials } from "../../feature/auth/authSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogOut = () => {
@@ -12,6 +13,7 @@ const Navbar = () => {
     localStorage.clear();
     dispatch(setAuthenticated(false));
     dispatch(setCredentials(null));
+    navigate('/login')
   };
 
   return (

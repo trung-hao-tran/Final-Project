@@ -1,10 +1,12 @@
 const express = require("express");
-
+const checkAdmin = require("../middleware/checkAdmin");
 const {
   createTask,
+  getTasksByUserId,
   getTasks,
   getTask,
   deleteTask,
+  adminDeleteTask,
   updateTask,
   getTaskers,
   assignTasker,
@@ -24,6 +26,9 @@ const router = express.Router();
 // GET all tasks
 router.get("/", getTasks);
 
+// GET all tasks
+router.get("/all/:id", getTasksByUserId);
+
 // GET a single task
 router.get("/:id", getTask);
 
@@ -32,6 +37,8 @@ router.post("/", requireAuth, createTask);
 
 // DELETE a task
 router.delete("/:id", requireAuth, deleteTask);
+
+router.delete("admin/:id", checkAdmin, adminDeleteTask);
 
 // UPDATE a task
 router.patch("/:id", requireAuth, updateTask);

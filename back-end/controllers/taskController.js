@@ -31,6 +31,23 @@ const getTasks = async (req, res) => {
   }
 };
 
+const getTasksByUserId = async (req, res) => {
+  try {
+    // Get the userId from request parameters
+    const { id } = req.params;
+
+    // Find tasks where taskId is the same as userId or userId matches the specified userId
+    const tasks = await Task.find({
+      $or: [{ taskId: id }, { user_id: id }],
+    }).sort({ updatedAt: -1 });
+    // Respond with the tasks
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // get a single task
 const getTask = async (req, res) => {
   const { id } = req.params;
@@ -119,6 +136,26 @@ const createTask = async (req, res) => {
   }
 };
 
+const adminDeleteTask = async (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    // Find the task by ID and remove it
+    const deletedTask = await Task.findByIdAndRemove(taskId);
+
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Optionally, you can perform additional actions after deletion
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 // delete a task
 const deleteTask = async (req, res) => {
   const user_id = req.user._id;
@@ -180,7 +217,7 @@ const updateTask = async (req, res) => {
 
 // GET all taskers bidding on a given task
 const getTaskers = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No such task" });
   }
@@ -301,19 +338,16 @@ const filterTasks = async (req, res) => {
 };
 
 const addMilestoneToTask = async (req, res) => {
-  console.log("triggered");
   const { id } = req.params; // Task id
   console.log("req.body", req.body);
   console.log(typeof req.body);
-  console.log("check");
+
   if (!req.body) {
     return res.status(400).json({ error: "No data for milestones" });
   }
 
   try {
     const milestones = req.body;
-
-    console.log("milestones", milestones);
 
     if (!Array.isArray(milestones)) {
       return res.status(400).json({ error: "Invalid data for milestones" });
@@ -393,8 +427,10 @@ const getMilestonesForTask = async (req, res) => {
 
 module.exports = {
   getTasks,
+  getTasksByUserId,
   getTask,
   createTask,
+  adminDeleteTask,
   deleteTask,
   updateTask,
   getTaskers,
