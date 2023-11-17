@@ -16,3 +16,29 @@ Submitted proposal
 Researched on the technology that we are going to use
 
 Week 4
+Code login and register
+Discuss with team on the techstack
+
+Week 5
+research and implement redux for presist login
+Prepare for client demo
+
+Week 6
+Research and implement user profile
+
+Week 7 
+implement static page format, redesign component
+Add API doc for back-end
+
+Week 8
+Create add-listing page with Google Api
+Fixing front-end display bug and back-end function 
+
+Week 9
+Add user profile and implementing task detail
+
+Week 10 
+Add other functions (add milestones, add bidding, bidding ladder, admin actions) to app
+Fixing display function
+Fixin back end bugs
+Prepare for demo
