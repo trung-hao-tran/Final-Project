@@ -16,7 +16,6 @@ import "slick-carousel/slick/slick-theme.css";
 import Modal from "react-modal";
 import MilestoneForm from "./milestone-form";
 import MileStoneEditForm from "./milestone-edit-form";
-
 const customStylesModal = {
   content: {
     top: "50%",
@@ -43,17 +42,13 @@ function TaskDetails() {
   const [task, setTaskDetails] = useState({});
   const [loadingTask, setLoadingTask] = useState(false);
   const [user, setUser] = useState({}); //store user info
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const isAdmin = useSelector((state) => state.users.isAdmin);
 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   console.log("isAuthenticated", isAuthenticated);
   console.log("token", token);
   console.log("userId", userId);
-
-  const userIdInTask = task?.user_id;
-  console.log("User id in task", userIdInTask);
   const begin = { lat: -33.9175, lng: 151.2303 };
   const libraries = ["places"];
   const [map, setMap] = useState(/** @type google.maps.Map */ (null));
@@ -73,9 +68,6 @@ function TaskDetails() {
 
   // set flag for re-fetch API
   const [flag, setFlag] = useState(false);
-
-  // bid ladder
-  const [bidLadder, setBidLadder] = useState(null);
 
   let subtitle;
   Modal.setAppElement("#quarter");
@@ -130,7 +122,7 @@ function TaskDetails() {
 
   const handleSubmitBid = async () => {
     const value = {
-      price: bid,
+      bid: bid,
       description: description,
       user_id: userId,
       task_id: id,
@@ -153,8 +145,6 @@ function TaskDetails() {
           "Submitted Bid Successfully! Task Owner will be notified and contact you soon!"
         );
         setLoadingBid(false);
-        setBid("");
-        setDescription("");
       } else {
         toast.error("Request Error");
         setLoadingBid(false);
@@ -224,24 +214,6 @@ function TaskDetails() {
             console.log("error", error);
             toast.error(`Error fetching user: ${error}`);
           });
-
-        // fetch bidding
-
-        fetch(`http://localhost:4000/api/bid/${id}`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Error: ${response.error}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            setBidLadder(data);
-          })
-          .catch((error) => {
-            console.error("Error fetching bid ladder:", error);
-            toast.error(`Error fetching bid ladder: ${error.message}`);
-          });
-
         setLoadingTask(false);
       })
       .catch((error) => {
@@ -250,8 +222,6 @@ function TaskDetails() {
         setLoadingTask(false);
       });
   }, [id, flag]);
-
-  // Get Bid ladder
 
   useEffect(() => {
     if (isLoaded && task.address) {
@@ -316,23 +286,6 @@ function TaskDetails() {
       toast.error(`Error: ${error}`);
       setLoadingDelete(false);
     }
-  };
-
-  console.log("bidLadder fetched", bidLadder);
-
-  // api : "/taskers/:taskId/:taskerId"
-  // params: :taskId, :taskerId as userId
-  const handleAcceptTask = async (taskId, userId) => {
-    fetch(`http://localhost:4000/api/tasks/${taskId}/${userId}`, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer {token}",
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((json) => console.log(JSON.stringify(json)));
   };
   return (
     <>
@@ -502,29 +455,16 @@ function TaskDetails() {
                       </li>
                     </ul>
                   </div>
-
-                  {userId !== task?.task_id &&
-                  userId !== task?.user_id &&
-                  !isAdmin ? (
-                    <></>
-                  ) : (
-                    <div className="row mb-30">
-                      <div className="col-lg-6">
-                        <h4 className="title-2">Task Milestone</h4>
-                      </div>
-                      {userId !== task?.user_id || isAdmin ? (
-                        <></>
-                      ) : (
-                        <div className="col-lg-6">
-                          <div style={{ textAlign: "right", marginTop: 30 }}>
-                            <button onClick={handleOpenModal}>
-                              Add Milestone
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                  <div className="row mb-30">
+                    <div className="col-lg-6">
+                      <h4 className="title-2">Task Milestone</h4>
                     </div>
-                  )}
+                    <div className="col-lg-6">
+                      <div style={{ textAlign: "right", marginTop: 30 }}>
+                        <button onClick={handleOpenModal}>Add Milestone</button>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* APARTMENTS PLAN AREA START */}
                   <div className="ltn__apartments-plan-area product-details-apartments-plan mb-60">
@@ -562,41 +502,37 @@ function TaskDetails() {
                                     <p>{v?.description}</p>
                                   </div>
                                 </div>
-                                {userId !== task?.user_id || isAdmin ? (
-                                  <></>
-                                ) : (
-                                  <div className="col-lg-6">
-                                    <div
-                                      style={{
-                                        marginTop: 35,
-                                        textAlign: "right",
-                                      }}
+                                <div className="col-lg-6">
+                                  <div
+                                    style={{
+                                      marginTop: 35,
+                                      textAlign: "right",
+                                    }}
+                                  >
+                                    <button
+                                      onClick={() =>
+                                        handleOpenEditModal(v, index)
+                                      }
+                                      style={{ marginRight: 10 }}
                                     >
-                                      <button
-                                        onClick={() =>
-                                          handleOpenEditModal(v, index)
-                                        }
-                                        style={{ marginRight: 10 }}
-                                      >
-                                        Edit this milestone
-                                      </button>
+                                      Edit this milestone
+                                    </button>
 
-                                      {task.milestones.length < 2 ? (
-                                        <></>
-                                      ) : (
-                                        <button
-                                          disabled={loadingDelete}
-                                          onClick={() =>
-                                            handleDeleteMilestone(index)
-                                          }
-                                        >
-                                          {" "}
-                                          Delete this milestone
-                                        </button>
-                                      )}
-                                    </div>
+                                    {task.milestones.length < 2 ? (
+                                      <></>
+                                    ) : (
+                                      <button
+                                        disabled={loadingDelete}
+                                        onClick={() =>
+                                          handleDeleteMilestone(index)
+                                        }
+                                      >
+                                        {" "}
+                                        Delete this milestone
+                                      </button>
+                                    )}
                                   </div>
-                                )}
+                                </div>
                               </div>
                               <div className="col-lg-12">
                                 <div className="product-details-apartments-info-list  section-bg-1">
@@ -645,6 +581,272 @@ function TaskDetails() {
                     </div>
                   </div>
                   {/* APARTMENTS PLAN AREA END */}
+                  <div className="ltn__shop-details-tab-content-inner--- ltn__shop-details-tab-inner-2 ltn__product-details-review-inner mb-60">
+                    <h4 className="title-2">Comments</h4>
+                    <div className="product-ratting">
+                      <ul>
+                        <li>
+                          <a href="#">
+                            <i className="fas fa-star" />
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <i className="fas fa-star" />
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <i className="fas fa-star" />
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <i className="fas fa-star-half-alt" />
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <i className="far fa-star" />
+                          </a>
+                        </li>
+                        <li className="review-total">
+                          {" "}
+                          <a href="#"> ( 95 Reviews )</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <hr />
+                    {/* comment-area */}
+                    <div className="ltn__comment-area mb-30">
+                      <div className="ltn__comment-inner">
+                        <ul>
+                          <li>
+                            <div className="ltn__comment-item clearfix">
+                              <div className="ltn__commenter-img">
+                                <img
+                                  src={
+                                    publicUrl + "assets/img/testimonial/1.jpg"
+                                  }
+                                  alt="Image"
+                                />
+                              </div>
+                              <div className="ltn__commenter-comment">
+                                <h6>
+                                  <a href="#">Adam Smit</a>
+                                </h6>
+                                <div className="product-ratting">
+                                  <ul>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star-half-alt" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="far fa-star" />
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <p>
+                                  Lorem ipsum dolor sit amet, consectetur
+                                  adipisicing elit. Doloribus, omnis fugit
+                                  corporis iste magnam ratione.
+                                </p>
+                                <span className="ltn__comment-reply-btn">
+                                  September 3, 2020
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                          <li>
+                            <div className="ltn__comment-item clearfix">
+                              <div className="ltn__commenter-img">
+                                <img
+                                  src={
+                                    publicUrl + "assets/img/testimonial/3.jpg"
+                                  }
+                                  alt="Image"
+                                />
+                              </div>
+                              <div className="ltn__commenter-comment">
+                                <h6>
+                                  <a href="#">Adam Smit</a>
+                                </h6>
+                                <div className="product-ratting">
+                                  <ul>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star-half-alt" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="far fa-star" />
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <p>
+                                  Lorem ipsum dolor sit amet, consectetur
+                                  adipisicing elit. Doloribus, omnis fugit
+                                  corporis iste magnam ratione.
+                                </p>
+                                <span className="ltn__comment-reply-btn">
+                                  September 2, 2020
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                          <li>
+                            <div className="ltn__comment-item clearfix">
+                              <div className="ltn__commenter-img">
+                                <img
+                                  src={
+                                    publicUrl + "assets/img/testimonial/2.jpg"
+                                  }
+                                  alt="Image"
+                                />
+                              </div>
+                              <div className="ltn__commenter-comment">
+                                <h6>
+                                  <a href="#">Adam Smit</a>
+                                </h6>
+                                <div className="product-ratting">
+                                  <ul>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="fas fa-star-half-alt" />
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a href="#">
+                                        <i className="far fa-star" />
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <p>
+                                  Lorem ipsum dolor sit amet, consectetur
+                                  adipisicing elit. Doloribus, omnis fugit
+                                  corporis iste magnam ratione.
+                                </p>
+                                <span className="ltn__comment-reply-btn">
+                                  September 2, 2020
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    {/* comment-reply */}
+                    <div className="ltn__comment-reply-area ltn__form-box mb-30">
+                      <form action="#">
+                        <h4>Add a Review</h4>
+                        <div className="mb-30">
+                          <div className="add-a-review">
+                            <h6>Your Ratings:</h6>
+                            <div className="product-ratting">
+                              <ul>
+                                <li>
+                                  <a href="#">
+                                    <i className="fas fa-star" />
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#">
+                                    <i className="fas fa-star" />
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#">
+                                    <i className="fas fa-star" />
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#">
+                                    <i className="fas fa-star" />
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#">
+                                    <i className="fas fa-star" />
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="input-item input-item-textarea ltn__custom-icon">
+                          <textarea
+                            placeholder="Type your comments...."
+                            defaultValue={""}
+                          />
+                        </div>
+
+                        <label className="mb-0">
+                          <input type="checkbox" name="agree" /> Save my name,
+                          email, and website in this browser for the next time I
+                          comment.
+                        </label>
+                        <div className="btn-wrapper">
+                          <button
+                            className="btn theme-btn-1 btn-effect-1 text-uppercase"
+                            type="submit"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="col-lg-4">
@@ -652,14 +854,10 @@ function TaskDetails() {
                   {/* Author Widget */}
                   <div className="widget ltn__author-widget">
                     <div className="ltn__author-widget-inner text-center">
-                      <img
-                        src={
-                          user?.image
-                            ? user.image
-                            : publicUrl + "assets/img/default/user.png"
-                        }
+                      {/* <img
+                        src={publicUrl + "assets/img/team/4.jpg"}
                         alt="Image"
-                      />
+                      /> */}
                       <h5>{user?.name}</h5>
                       <small>{user?.email}</small>
 
@@ -711,130 +909,61 @@ function TaskDetails() {
                     </form>
                   </div> */}
                   {/* Form Widget */}
-                  {userIdInTask !== userId ? (
-                    <div className="widget ltn__form-widget">
-                      <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                        Bid this task
-                      </h4>
+                  <div className="widget ltn__form-widget">
+                    <h4 className="ltn__widget-title ltn__widget-title-border-2">
+                      Bid your task
+                    </h4>
 
-                      {isAuthenticated ? (
-                        <>
-                          <input
-                            type="text"
-                            name="bid"
-                            inputMode="numeric"
-                            placeholder="Bid your price (in AUD)*"
-                            value={bid}
-                            onChange={handleChangeBid}
-                          />
+                    {isAuthenticated ? (
+                      <>
+                        <input
+                          type="text"
+                          name="bid"
+                          inputMode="numeric"
+                          placeholder="Bid your price (in AUD)*"
+                          value={bid}
+                          onChange={handleChangeBid}
+                        />
 
-                          <textarea
-                            name="yourmessage"
-                            placeholder="Write description..."
-                            value={description}
-                            onChange={handleChangeDescription}
-                          />
+                        <textarea
+                          name="yourmessage"
+                          placeholder="Write description..."
+                          value={description}
+                          onChange={handleChangeDescription}
+                        />
 
+                        <button
+                          onClick={handleSubmitBid}
+                          className="btn theme-btn-1"
+                          disabled={
+                            loadingBid ||
+                            bid.length < 1 ||
+                            description.length < 1
+                          }
+                        >
+                          Send Bid
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p>You are not currently logged in</p>
+                        <p>
+                          Please
                           <button
-                            onClick={handleSubmitBid}
-                            className="btn theme-btn-1"
-                            disabled={
-                              loadingBid ||
-                              bid.length < 1 ||
-                              description.length < 1
-                            }
+                            style={{
+                              background: "transparent",
+                            }}
+                            onClick={handleNavigateLogin}
                           >
-                            Send Bid
+                            <Link>
+                              <strong> log in</strong>
+                            </Link>{" "}
                           </button>
-                        </>
-                      ) : (
-                        <>
-                          <p>You are not currently logged in</p>
-                          <p>
-                            Please
-                            <button
-                              style={{
-                                background: "transparent",
-                              }}
-                              onClick={handleNavigateLogin}
-                            >
-                              <Link>
-                                <strong> log in</strong>
-                              </Link>{" "}
-                            </button>
-                            to bid for task!
-                          </p>
-                        </>
-                      )}
-                    </div>
-                  ) : (
-                    <>
-                      <div
-                        style={{ overflowY: "auto", maxHeight: 550 }}
-                        className="widget ltn__form-widget"
-                      >
-                        <h4 className="ltn__widget-title ltn__widget-title-border-2">
-                          Bid ladder
-                        </h4>
-                        <br />
-                        {bidLadder?.length ? (
-                          bidLadder?.map((v) => (
-                            <div key={v?._id} className="mt-20 mb-20">
-                              <div className="row ">
-                                <div className="col-md-3">
-                                  <Link to={`/user/${v?.user?.id}`}>
-                                    <img
-                                      width={30}
-                                      src={
-                                        v?.image
-                                          ? v?.image
-                                          : publicUrl +
-                                            "assets/img/default/user.png"
-                                      }
-                                      alt="#"
-                                      className="mb-10"
-                                    />
-                                  </Link>
-                                  <br />
-                                  <h6 className="mb-5 go-top">
-                                    <Link to={`/user/${v?.user?.id}`}>
-                                      {v?.user?.name}
-                                    </Link>
-                                  </h6>
-                                </div>
-                                <div className="col-md-6">
-                                  <div className="ltn__my-properties-info">
-                                    <small>
-                                      <i className="icon-dollar" />{" "}
-                                      {`$ ${v?.price}`}
-                                    </small>
-                                    <br />
-                                    <small>
-                                      <i className="icon-info" />
-                                      {v?.description}
-                                    </small>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <button
-                                    style={{
-                                      backgroundColor: "green",
-                                      color: "white",
-                                    }}
-                                  >
-                                    Accept
-                                  </button>
-                                </div>
-                              </div>
-                              <hr className="rounded" />
-                            </div>
-                          ))
-                        ) : (
-                          <div> No bids yet</div>
-                        )}
-                      </div>
-                    </>
-                  )}
+                          to bid for task!
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </aside>
               </div>
             </div>
@@ -849,7 +978,7 @@ function TaskDetails() {
         style={customStylesModal}
         ariaHideApp={false}
       >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Milestone</h2>
         <MilestoneForm
           flag={flag}
           onClose={handleCloseModal}

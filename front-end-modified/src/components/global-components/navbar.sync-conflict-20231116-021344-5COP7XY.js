@@ -5,7 +5,7 @@ import { setAuthenticated, setCredentials } from "../../feature/auth/authSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogOut = () => {
@@ -13,7 +13,7 @@ const Navbar = () => {
     localStorage.clear();
     dispatch(setAuthenticated(false));
     dispatch(setCredentials(null));
-    navigate("/login");
+    navigate('/login')
   };
 
   return (
@@ -48,7 +48,7 @@ const Navbar = () => {
                 <div className="site-logo-wrap">
                   <div className="site-logo go-top">
                     <Link to="/">
-                      <img src={"/assets/img/logo.png"} alt="Logo" />
+                      <img src={"assets/img/logo.png"} alt="Logo" />
                     </Link>
                   </div>
                 </div>

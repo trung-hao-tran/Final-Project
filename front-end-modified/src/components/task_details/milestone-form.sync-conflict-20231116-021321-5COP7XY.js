@@ -152,6 +152,7 @@ const MilestoneForm = (props) => {
                 type="datetime-local"
                 name="date"
                 placeholder="date"
+                min={today}
                 defaultValue={today}
                 max={endTimeData}
               />

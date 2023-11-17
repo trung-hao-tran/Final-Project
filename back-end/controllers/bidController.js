@@ -17,7 +17,7 @@ const getBid = async (req, res) => {
 
     // Check if there are any bids
     if (!bids.length) {
-      return res.status(404).json({ error: "No bid yet!" });
+      return res.status(200).json([]);
     }
 
     // Update user_id in each bid with the user object
