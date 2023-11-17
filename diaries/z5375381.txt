@@ -50,5 +50,5 @@ Week 10
 Modification and test for final demo.
 Complete "Map Functionalities to All Project Requirements" section for report.
 Complete "Implementation of Functionalities" section for report.
-
+Complete "Third-party Functionalities" section for report.
 
