@@ -1,9 +1,9 @@
 Week 1
-Group formed and named. 
+The group formed and named. 
 Selected Scrum Master. 
 Our Scrum Master created the Jira Site. 
 Decided on the topic with other group members. 
-We finally chose project 18 and dicided to communicate with Discord. 
+We finally chose Project 18 and decided to communicate with Discord. 
 I also do some research about this topic.
 
 
@@ -11,7 +11,7 @@ Week 2
 Our team leader held a meeting with the client, from which we gained a better understanding of more details that the project needs to include. 
 As a team, we decided on everyone's part in the proposal. 
 I was responsible for writing the background part of the project. 
-We also identified objectives in orders and what we need to do.
+We also identified objectives in orders and what we needed to do.
 
 
 Week 3
@@ -32,6 +32,20 @@ Perform demo A preparation and presentation.
 Write retrospective A with group members.
 
 Week 6
-Flexibility Week
+Do some research
 
 Week 7
+Fixing back-end bugs.
+Partially completed milestones function.
+
+Week 8
+Fixing the bugs in milestones functions.
+
+Week 9
+Completed milestones functions.
+
+Week 10 
+Fixing back-end bugs
+Prepare for demo
+Completed the Installation, User document and manual part for the report.
+Done the document presentation, title page and references for the report.
